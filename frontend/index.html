@@ -4,8 +4,44 @@
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>gan</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        overflow: hidden; /* Prevents scrollbars */
+      }
+
+      canvas {
+        display: block; /* Removes the default inline-block space below canvas */
+        width: 100%;
+        height: 100%;
+      }
+      #canvas-container {
+        position: relative;
+        background-color: transparent;
+        width: 100vw;
+        height: 100vh;
+      }
+      #debug-text {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        color: white;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px;
+      }
+    </style>
   </head>
-  <body style="margin: 0;">
+  <body style="margin: 0">
+      <div id="debug-text">Debug Info Here</div>
     <canvas id="canvas"></canvas>
     <script src="./src/main.ts" type="module"></script>
   </body>
