@@ -1,11 +1,19 @@
 import * as THREE from "three";
 
+import {
+  WindowFullscreen,
+  WindowUnfullscreen,
+} from "../wailsjs/runtime/runtime";
+
 // Config
 const debug = false;
+let isFullScreen = false;
 
 // Get the canvas element from HTML
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const debugText = document.getElementById("debug-text") as HTMLCanvasElement;
+
+if (!debug) debugText.style.display = "none";
 
 // Create scene
 const scene = new THREE.Scene();
@@ -89,6 +97,10 @@ window.addEventListener("keyup", (e) => {
   if (e.key === "d") isPressingD = false;
   if (e.key === "q") isPressingQ = false;
   if (e.key === "e") isPressingE = false;
+  if (e.key === "F11") {
+    isFullScreen ? WindowUnfullscreen() : WindowFullscreen();
+    isFullScreen = !isFullScreen;
+  }
 });
 
 function addCube(
