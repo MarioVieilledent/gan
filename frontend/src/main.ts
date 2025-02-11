@@ -17,6 +17,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
+camera.position.y = 1.5;
 camera.position.z = 5;
 
 // Player
@@ -40,22 +41,20 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // Load texture
 let textures: Record<string, THREE.Texture> = {};
 const textureLoader = new THREE.TextureLoader();
-textures.pavingStones = textureLoader.load("/PavingStones136_1K-JPG_Color.jpg");
-textures.rust = textureLoader.load("/Rust006_1K-JPG_Color.jpg");
-textures.metal = textureLoader.load("/Metal055C_1K-JPG_Color.jpg");
-textures.corrugatedSteel = textureLoader.load(
-  "/CorrugatedSteel007B_1K-JPG_Color.jpg"
-);
-textures.concrete = textureLoader.load("/Concrete042C_1K-JPG_Color.jpg");
+textures.pavingStones = textureLoader.load("/PavingStones.jpg");
+textures.rust = textureLoader.load("/Rust.jpg");
+textures.metal = textureLoader.load("/Metal.jpg");
+textures.corrugatedSteel = textureLoader.load("/CorrugatedSteel.jpg");
+textures.concrete = textureLoader.load("/Concrete.jpg");
 
 // Create cube geometry and material
 const geometry = new THREE.BoxGeometry();
 
-addCube(textures.metal, 0, 0, 0);
-addCube(textures.metal, 1, 0, 0);
-addCube(textures.metal, 2, 1, 0);
-addCube(textures.metal, 3, 0, 0);
-addCube(textures.metal, 4, 0, 0);
+for (let x = -3; x <= 3; x++) {
+  for (let y = -3; y <= 3; y++) {
+    addRoom(x, 0, y);
+  }
+}
 
 // Animation loop
 function animate() {
@@ -156,4 +155,57 @@ function writeDebugData() {
   <p>${yAngle.toFixed(2)}</p>
   <p>need inversion: ${camera.rotation.x !== 0.0}</p>
   `;
+}
+
+function addRoom(x: number, y: number, z: number) {
+  x *= 5;
+  y *= 5;
+  z *= 5;
+  // Ground
+  addCube(textures.pavingStones, x + 0, y + 0, z + 2);
+  addCube(textures.pavingStones, x + 1, y + 0, z + 1);
+  addCube(textures.pavingStones, x + 1, y + 0, z + 2);
+  addCube(textures.pavingStones, x + 1, y + 0, z + 3);
+  addCube(textures.pavingStones, x + 2, y + 0, z + 0);
+  addCube(textures.pavingStones, x + 2, y + 0, z + 1);
+  addCube(textures.pavingStones, x + 2, y + 0, z + 2);
+  addCube(textures.pavingStones, x + 2, y + 0, z + 3);
+  addCube(textures.pavingStones, x + 2, y + 0, z + 4);
+  addCube(textures.pavingStones, x + 3, y + 0, z + 1);
+  addCube(textures.pavingStones, x + 3, y + 0, z + 2);
+  addCube(textures.pavingStones, x + 3, y + 0, z + 3);
+  addCube(textures.pavingStones, x + 4, y + 0, z + 2);
+
+  // Walls
+  addCube(textures.metal, x + 1, y + 1, z + 0);
+  addCube(textures.metal, x + 0, y + 1, z + 1);
+  addCube(textures.metal, x + 3, y + 1, z + 0);
+  addCube(textures.metal, x + 4, y + 1, z + 1);
+  addCube(textures.metal, x + 0, y + 1, z + 3);
+  addCube(textures.metal, x + 1, y + 1, z + 4);
+  addCube(textures.metal, x + 3, y + 1, z + 4);
+  addCube(textures.metal, x + 4, y + 1, z + 3);
+  addCube(textures.metal, x + 1, y + 2, z + 0);
+  addCube(textures.metal, x + 0, y + 2, z + 1);
+  addCube(textures.metal, x + 3, y + 2, z + 0);
+  addCube(textures.metal, x + 4, y + 2, z + 1);
+  addCube(textures.metal, x + 0, y + 2, z + 3);
+  addCube(textures.metal, x + 1, y + 2, z + 4);
+  addCube(textures.metal, x + 3, y + 2, z + 4);
+  addCube(textures.metal, x + 4, y + 2, z + 3);
+
+  // Roof
+  addCube(textures.rust, x + 0, y + 3, z + 2);
+  addCube(textures.rust, x + 1, y + 3, z + 1);
+  addCube(textures.rust, x + 1, y + 3, z + 2);
+  addCube(textures.rust, x + 1, y + 3, z + 3);
+  addCube(textures.rust, x + 2, y + 3, z + 0);
+  addCube(textures.rust, x + 2, y + 3, z + 1);
+  addCube(textures.rust, x + 2, y + 3, z + 2);
+  addCube(textures.rust, x + 2, y + 3, z + 3);
+  addCube(textures.rust, x + 2, y + 3, z + 4);
+  addCube(textures.rust, x + 3, y + 3, z + 1);
+  addCube(textures.rust, x + 3, y + 3, z + 2);
+  addCube(textures.rust, x + 3, y + 3, z + 3);
+  addCube(textures.rust, x + 4, y + 3, z + 2);
 }
