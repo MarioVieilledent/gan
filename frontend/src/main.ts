@@ -15,10 +15,10 @@ const debugText = document.getElementById("debug-text") as HTMLCanvasElement;
 
 if (!debug) debugText.style.display = "none";
 
-// Create scene
+// Scene
 const scene = new THREE.Scene();
 
-// Create camera
+// Camera
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -46,6 +46,11 @@ let isPressingE = false;
 const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
+// Lights
+const pointLight = new THREE.PointLight(0xffbb66, 1.3);
+setLightToCameraPosition(pointLight);
+scene.add(pointLight);
+
 // Load texture
 const textureList = [
   "PavingStones",
@@ -55,14 +60,14 @@ const textureList = [
   "Concrete",
 ];
 let textures: Record<string, THREE.Texture> = {};
-let materials: Record<string, THREE.MeshBasicMaterial> = {};
+let materials: Record<string, THREE.MeshLambertMaterial> = {};
 const textureLoader = new THREE.TextureLoader();
 
 const cubeGeometry = new THREE.BoxGeometry();
 
 textureList.forEach((t) => {
   textures[t] = textureLoader.load(`/${t}.jpg`);
-  materials[t] = new THREE.MeshBasicMaterial({ map: textures[t] });
+  materials[t] = new THREE.MeshLambertMaterial({ map: textures[t] });
 });
 
 for (let x = -3; x <= 3; x++) {
@@ -134,7 +139,7 @@ window.addEventListener("keyup", (e) => {
 });
 
 function addCube(
-  material: THREE.MeshBasicMaterial,
+  material: THREE.MeshLambertMaterial,
   x: number,
   y: number,
   z: number
@@ -171,6 +176,11 @@ function processPlayerMovements() {
     camera.rotateY(-rotationSpeed);
     processYAngle();
   }
+  setLightToCameraPosition(pointLight);
+}
+
+function setLightToCameraPosition(light: THREE.PointLight) {
+  light.position.set(camera.position.x, camera.position.y, camera.position.z);
 }
 
 function processYAngle() {
