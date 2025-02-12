@@ -6,7 +6,7 @@ import {
 } from "../wailsjs/runtime/runtime";
 
 // Config
-const debug = false;
+const debug = true;
 let isFullScreen = false;
 
 // Get the canvas element from HTML
@@ -25,16 +25,16 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
+camera.position.x = 2.0;
 camera.position.y = 1.5;
-camera.position.z = 5;
+camera.position.z = 3.0;
 
 // Player
 let speed = 0.01;
 let rotationSpeed = 0.01;
 let cosAngle = 1.0;
 let sinAngle = 0.0;
-let yAngle = 0.0; // Corrected angle on axis y
-// let angle = 0.0;
+let yAngle = 0.0;
 let isPressingW = false;
 let isPressingA = false;
 let isPressingS = false;
@@ -47,21 +47,43 @@ const renderer = new THREE.WebGLRenderer({ canvas });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Load texture
+const textureList = [
+  "PavingStones",
+  "Rust",
+  "Metal",
+  "CorrugatedSteel",
+  "Concrete",
+];
 let textures: Record<string, THREE.Texture> = {};
+let materials: Record<string, THREE.MeshBasicMaterial> = {};
 const textureLoader = new THREE.TextureLoader();
-textures.pavingStones = textureLoader.load("/PavingStones.jpg");
-textures.rust = textureLoader.load("/Rust.jpg");
-textures.metal = textureLoader.load("/Metal.jpg");
-textures.corrugatedSteel = textureLoader.load("/CorrugatedSteel.jpg");
-textures.concrete = textureLoader.load("/Concrete.jpg");
 
-// Create cube geometry and material
-const geometry = new THREE.BoxGeometry();
+const cubeGeometry = new THREE.BoxGeometry();
+
+textureList.forEach((t) => {
+  textures[t] = textureLoader.load(`/${t}.jpg`);
+  materials[t] = new THREE.MeshBasicMaterial({ map: textures[t] });
+});
 
 for (let x = -3; x <= 3; x++) {
   for (let y = -3; y <= 3; y++) {
     addRoom(x, 0, y);
   }
+}
+
+function writeDebugData() {
+  debugText.innerHTML = `
+  <p>FPS: ${fps}</p>
+  <p>${camera.position.x.toFixed(2)},
+  ${camera.position.y.toFixed(2)},
+  ${camera.position.z.toFixed(2)}</p>
+  <p>${camera.rotation.x.toFixed(2)}</p>
+  <p>${camera.rotation.y.toFixed(2)}</p>
+  <p>${camera.rotation.z.toFixed(2)}</p>
+  <br />
+  <p>${yAngle.toFixed(2)}</p>
+  <p>need inversion: ${camera.rotation.x !== 0.0}</p>
+  `;
 }
 
 // Animation loop
@@ -70,7 +92,15 @@ function animate() {
   processPlayerMovements();
   if (debug) writeDebugData();
   renderer.render(scene, camera);
+  frameRendered++;
 }
+
+let fps: string | number = "unknown";
+let frameRendered = 0;
+setInterval(() => {
+  fps = frameRendered;
+  frameRendered = 0;
+}, 1000);
 
 animate();
 
@@ -104,15 +134,12 @@ window.addEventListener("keyup", (e) => {
 });
 
 function addCube(
-  texture: THREE.Texture,
+  material: THREE.MeshBasicMaterial,
   x: number,
   y: number,
   z: number
 ): void {
-  const material = new THREE.MeshBasicMaterial({ map: texture });
-
-  // Create cube mesh
-  const cube = new THREE.Mesh(geometry, material);
+  const cube = new THREE.Mesh(cubeGeometry, material);
   scene.add(cube);
   cube.translateX(x);
   cube.translateY(y);
@@ -156,68 +183,55 @@ function processYAngle() {
   sinAngle = Math.sin(yAngle);
 }
 
-function writeDebugData() {
-  debugText.innerHTML = `<p>${camera.position.x.toFixed(2)},
-  ${camera.position.y.toFixed(2)},
-  ${camera.position.z.toFixed(2)}</p>
-  <p>${camera.rotation.x.toFixed(2)}</p>
-  <p>${camera.rotation.y.toFixed(2)}</p>
-  <p>${camera.rotation.z.toFixed(2)}</p>
-  <br />
-  <p>${yAngle.toFixed(2)}</p>
-  <p>need inversion: ${camera.rotation.x !== 0.0}</p>
-  `;
-}
-
 function addRoom(x: number, y: number, z: number) {
   x *= 5;
   y *= 5;
   z *= 5;
   // Ground
-  addCube(textures.pavingStones, x + 0, y + 0, z + 2);
-  addCube(textures.pavingStones, x + 1, y + 0, z + 1);
-  addCube(textures.pavingStones, x + 1, y + 0, z + 2);
-  addCube(textures.pavingStones, x + 1, y + 0, z + 3);
-  addCube(textures.pavingStones, x + 2, y + 0, z + 0);
-  addCube(textures.pavingStones, x + 2, y + 0, z + 1);
-  addCube(textures.pavingStones, x + 2, y + 0, z + 2);
-  addCube(textures.pavingStones, x + 2, y + 0, z + 3);
-  addCube(textures.pavingStones, x + 2, y + 0, z + 4);
-  addCube(textures.pavingStones, x + 3, y + 0, z + 1);
-  addCube(textures.pavingStones, x + 3, y + 0, z + 2);
-  addCube(textures.pavingStones, x + 3, y + 0, z + 3);
-  addCube(textures.pavingStones, x + 4, y + 0, z + 2);
+  addCube(materials.PavingStones, x + 0, y + 0, z + 2);
+  addCube(materials.PavingStones, x + 1, y + 0, z + 1);
+  addCube(materials.PavingStones, x + 1, y + 0, z + 2);
+  addCube(materials.PavingStones, x + 1, y + 0, z + 3);
+  addCube(materials.PavingStones, x + 2, y + 0, z + 0);
+  addCube(materials.PavingStones, x + 2, y + 0, z + 1);
+  addCube(materials.PavingStones, x + 2, y + 0, z + 2);
+  addCube(materials.PavingStones, x + 2, y + 0, z + 3);
+  addCube(materials.PavingStones, x + 2, y + 0, z + 4);
+  addCube(materials.PavingStones, x + 3, y + 0, z + 1);
+  addCube(materials.PavingStones, x + 3, y + 0, z + 2);
+  addCube(materials.PavingStones, x + 3, y + 0, z + 3);
+  addCube(materials.PavingStones, x + 4, y + 0, z + 2);
 
   // Walls
-  addCube(textures.metal, x + 1, y + 1, z + 0);
-  addCube(textures.metal, x + 0, y + 1, z + 1);
-  addCube(textures.metal, x + 3, y + 1, z + 0);
-  addCube(textures.metal, x + 4, y + 1, z + 1);
-  addCube(textures.metal, x + 0, y + 1, z + 3);
-  addCube(textures.metal, x + 1, y + 1, z + 4);
-  addCube(textures.metal, x + 3, y + 1, z + 4);
-  addCube(textures.metal, x + 4, y + 1, z + 3);
-  addCube(textures.metal, x + 1, y + 2, z + 0);
-  addCube(textures.metal, x + 0, y + 2, z + 1);
-  addCube(textures.metal, x + 3, y + 2, z + 0);
-  addCube(textures.metal, x + 4, y + 2, z + 1);
-  addCube(textures.metal, x + 0, y + 2, z + 3);
-  addCube(textures.metal, x + 1, y + 2, z + 4);
-  addCube(textures.metal, x + 3, y + 2, z + 4);
-  addCube(textures.metal, x + 4, y + 2, z + 3);
+  addCube(materials.Metal, x + 1, y + 1, z + 0);
+  addCube(materials.Metal, x + 0, y + 1, z + 1);
+  addCube(materials.Metal, x + 3, y + 1, z + 0);
+  addCube(materials.Metal, x + 4, y + 1, z + 1);
+  addCube(materials.Metal, x + 0, y + 1, z + 3);
+  addCube(materials.Metal, x + 1, y + 1, z + 4);
+  addCube(materials.Metal, x + 3, y + 1, z + 4);
+  addCube(materials.Metal, x + 4, y + 1, z + 3);
+  addCube(materials.Metal, x + 1, y + 2, z + 0);
+  addCube(materials.Metal, x + 0, y + 2, z + 1);
+  addCube(materials.Metal, x + 3, y + 2, z + 0);
+  addCube(materials.Metal, x + 4, y + 2, z + 1);
+  addCube(materials.Metal, x + 0, y + 2, z + 3);
+  addCube(materials.Metal, x + 1, y + 2, z + 4);
+  addCube(materials.Metal, x + 3, y + 2, z + 4);
+  addCube(materials.Metal, x + 4, y + 2, z + 3);
 
   // Roof
-  addCube(textures.rust, x + 0, y + 3, z + 2);
-  addCube(textures.rust, x + 1, y + 3, z + 1);
-  addCube(textures.rust, x + 1, y + 3, z + 2);
-  addCube(textures.rust, x + 1, y + 3, z + 3);
-  addCube(textures.rust, x + 2, y + 3, z + 0);
-  addCube(textures.rust, x + 2, y + 3, z + 1);
-  addCube(textures.rust, x + 2, y + 3, z + 2);
-  addCube(textures.rust, x + 2, y + 3, z + 3);
-  addCube(textures.rust, x + 2, y + 3, z + 4);
-  addCube(textures.rust, x + 3, y + 3, z + 1);
-  addCube(textures.rust, x + 3, y + 3, z + 2);
-  addCube(textures.rust, x + 3, y + 3, z + 3);
-  addCube(textures.rust, x + 4, y + 3, z + 2);
+  addCube(materials.Rust, x + 0, y + 3, z + 2);
+  addCube(materials.Rust, x + 1, y + 3, z + 1);
+  addCube(materials.Rust, x + 1, y + 3, z + 2);
+  addCube(materials.Rust, x + 1, y + 3, z + 3);
+  addCube(materials.Rust, x + 2, y + 3, z + 0);
+  addCube(materials.Rust, x + 2, y + 3, z + 1);
+  addCube(materials.Rust, x + 2, y + 3, z + 2);
+  addCube(materials.Rust, x + 2, y + 3, z + 3);
+  addCube(materials.Rust, x + 2, y + 3, z + 4);
+  addCube(materials.Rust, x + 3, y + 3, z + 1);
+  addCube(materials.Rust, x + 3, y + 3, z + 2);
+  addCube(materials.Rust, x + 3, y + 3, z + 3);
+  addCube(materials.Rust, x + 4, y + 3, z + 2);
 }
