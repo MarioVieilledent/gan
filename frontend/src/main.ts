@@ -116,22 +116,22 @@ window.addEventListener("resize", () => {
 });
 
 window.addEventListener("keydown", (e) => {
-  if (e.key === "w") isPressingW = true;
-  if (e.key === "a") isPressingA = true;
-  if (e.key === "s") isPressingS = true;
-  if (e.key === "d") isPressingD = true;
-  if (e.key === "q") isPressingQ = true;
-  if (e.key === "e") isPressingE = true;
+  if (e.code === "KeyW") isPressingW = true;
+  if (e.code === "KeyA") isPressingA = true;
+  if (e.code === "KeyS") isPressingS = true;
+  if (e.code === "KeyD") isPressingD = true;
+  if (e.code === "KeyQ") isPressingQ = true;
+  if (e.code === "KeyE") isPressingE = true;
 });
 
 window.addEventListener("keyup", (e) => {
-  if (e.key === "w") isPressingW = false;
-  if (e.key === "a") isPressingA = false;
-  if (e.key === "s") isPressingS = false;
-  if (e.key === "d") isPressingD = false;
-  if (e.key === "q") isPressingQ = false;
-  if (e.key === "e") isPressingE = false;
-  if (e.key === "F11") {
+  if (e.code === "KeyW") isPressingW = false;
+  if (e.code === "KeyA") isPressingA = false;
+  if (e.code === "KeyS") isPressingS = false;
+  if (e.code === "KeyD") isPressingD = false;
+  if (e.code === "KeyQ") isPressingQ = false;
+  if (e.code === "KeyE") isPressingE = false;
+  if (e.code === "F11") {
     isFullScreen ? WindowUnfullscreen() : WindowFullscreen();
     isFullScreen = !isFullScreen;
   }
