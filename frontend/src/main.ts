@@ -30,8 +30,8 @@ camera.position.y = 1.5;
 camera.position.z = 3.0;
 
 // Player
-let speed = 0.01;
-let rotationSpeed = 0.01;
+let speed = 2.0; // block/ss
+let rotationSpeed = Math.PI; // rad/s
 let cosAngle = 1.0;
 let sinAngle = 0.0;
 let yAngle = 0.0;
@@ -70,15 +70,19 @@ textureList.forEach((t) => {
   materials[t] = new THREE.MeshLambertMaterial({ map: textures[t] });
 });
 
-for (let x = -3; x <= 3; x++) {
-  for (let y = -3; y <= 3; y++) {
+for (let x = -4; x <= 4; x++) {
+  for (let y = -4; y <= 4; y++) {
     addRoom(x, 0, y);
   }
 }
 
+// FPS
+let fps: number = 60.0;
+let previousFrame = new Date().getTime();
+
 function writeDebugData() {
   debugText.innerHTML = `
-  <p>FPS: ${fps}</p>
+  <p>FPS: ${fps.toFixed(1)}</p>
   <p>${camera.position.x.toFixed(2)},
   ${camera.position.y.toFixed(2)},
   ${camera.position.z.toFixed(2)}</p>
@@ -93,19 +97,14 @@ function writeDebugData() {
 
 // Animation loop
 function animate() {
+  const now = new Date().getTime();
+  fps = 1000.0 / (now - previousFrame);
+  previousFrame = now;
   requestAnimationFrame(animate);
   processPlayerMovements();
   if (debug) writeDebugData();
   renderer.render(scene, camera);
-  frameRendered++;
 }
-
-let fps: string | number = "unknown";
-let frameRendered = 0;
-setInterval(() => {
-  fps = frameRendered;
-  frameRendered = 0;
-}, 1000);
 
 animate();
 
@@ -153,27 +152,27 @@ function addCube(
 
 function processPlayerMovements() {
   if (isPressingW) {
-    camera.position.z -= speed * cosAngle;
-    camera.position.x -= speed * sinAngle;
+    camera.position.z -= (speed / fps) * cosAngle;
+    camera.position.x -= (speed / fps) * sinAngle;
   }
   if (isPressingA) {
-    camera.position.z += speed * sinAngle;
-    camera.position.x -= speed * cosAngle;
+    camera.position.z += (speed / fps) * sinAngle;
+    camera.position.x -= (speed / fps) * cosAngle;
   }
   if (isPressingS) {
-    camera.position.z += speed * cosAngle;
-    camera.position.x += speed * sinAngle;
+    camera.position.z += (speed / fps) * cosAngle;
+    camera.position.x += (speed / fps) * sinAngle;
   }
   if (isPressingD) {
-    camera.position.z -= speed * sinAngle;
-    camera.position.x += speed * cosAngle;
+    camera.position.z -= (speed / fps) * sinAngle;
+    camera.position.x += (speed / fps) * cosAngle;
   }
   if (isPressingQ) {
-    camera.rotateY(rotationSpeed);
+    camera.rotateY(rotationSpeed / fps);
     processYAngle();
   }
   if (isPressingE) {
-    camera.rotateY(-rotationSpeed);
+    camera.rotateY(-rotationSpeed / fps);
     processYAngle();
   }
   setLightToCameraPosition(pointLight);
