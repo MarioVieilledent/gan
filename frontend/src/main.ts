@@ -9,6 +9,11 @@ import {
 const debug = true;
 let isFullScreen = false;
 
+// Mouse camera control
+let yaw = 0;
+let pitch = 0;
+let sensitivity = 0.002;
+
 // Get the canvas element from HTML
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const debugText = document.getElementById("debug-text") as HTMLCanvasElement;
@@ -25,22 +30,23 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.x = 2.0;
-camera.position.y = 1.5;
-camera.position.z = 3.0;
+
+const cameraHolder = new THREE.Group();
+cameraHolder.add(camera);
+scene.add(cameraHolder);
+
+cameraHolder.position.x = 2.0;
+cameraHolder.position.y = 1.5;
+cameraHolder.position.z = 3.0;
 
 // Player
-let speed = 2.0; // block/ss
-let rotationSpeed = Math.PI; // rad/s
+let speed = 2.0; // block/s
 let cosAngle = 1.0;
 let sinAngle = 0.0;
-let yAngle = 0.0;
 let isPressingW = false;
 let isPressingA = false;
 let isPressingS = false;
 let isPressingD = false;
-let isPressingQ = false;
-let isPressingE = false;
 
 // Create renderer and bind it to the canvas
 const renderer = new THREE.WebGLRenderer({ canvas });
@@ -83,29 +89,32 @@ let previousFrame = new Date().getTime();
 function writeDebugData() {
   debugText.innerHTML = `
   <p>FPS: ${fps.toFixed(1)}</p>
-  <p>${camera.position.x.toFixed(2)},
-  ${camera.position.y.toFixed(2)},
-  ${camera.position.z.toFixed(2)}</p>
-  <p>${camera.rotation.x.toFixed(2)}</p>
-  <p>${camera.rotation.y.toFixed(2)}</p>
-  <p>${camera.rotation.z.toFixed(2)}</p>
+  <p>${cameraHolder.position.x.toFixed(2)},
+  ${cameraHolder.position.y.toFixed(2)},
+  ${cameraHolder.position.z.toFixed(2)}</p>
   <br />
-  <p>${yAngle.toFixed(2)}</p>
-  <p>need inversion: ${camera.rotation.x !== 0.0}</p>
+  <p>${camera.rotation.x.toFixed(2)}</p>
+  <p>${cameraHolder.rotation.y.toFixed(2)}</p>
+  <p>${camera.rotation.z.toFixed(2)}</p>
   `;
 }
 
 // Animation loop
 function animate() {
+  requestAnimationFrame(animate);
+
   const now = new Date().getTime();
   fps = 1000.0 / (now - previousFrame);
   previousFrame = now;
-  requestAnimationFrame(animate);
+
   processPlayerMovements();
+
   if (debug) writeDebugData();
+
   renderer.render(scene, camera);
 }
 
+precomputeCosAndSin();
 animate();
 
 // Handle window resize
@@ -120,8 +129,6 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "KeyA") isPressingA = true;
   if (e.code === "KeyS") isPressingS = true;
   if (e.code === "KeyD") isPressingD = true;
-  if (e.code === "KeyQ") isPressingQ = true;
-  if (e.code === "KeyE") isPressingE = true;
 });
 
 window.addEventListener("keyup", (e) => {
@@ -129,14 +136,30 @@ window.addEventListener("keyup", (e) => {
   if (e.code === "KeyA") isPressingA = false;
   if (e.code === "KeyS") isPressingS = false;
   if (e.code === "KeyD") isPressingD = false;
-  if (e.code === "KeyQ") isPressingQ = false;
-  if (e.code === "KeyE") isPressingE = false;
   if (e.code === "F11") {
     isFullScreen ? WindowUnfullscreen() : WindowFullscreen();
     isFullScreen = !isFullScreen;
   }
 });
 
+// Pointer Lock API to capture the mouse
+document.body.addEventListener("click", () => {
+  document.body.requestPointerLock();
+});
+
+// Listen to mouse movement
+window.addEventListener("mousemove", (event) => {
+  if (document.pointerLockElement === document.body) {
+    yaw -= event.movementX * sensitivity;
+    pitch -= event.movementY * sensitivity;
+    pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch)); // Clamp pitch to avoid flipping
+
+    cameraHolder.rotation.y = yaw; // Yaw applied to parent group
+    camera.rotation.x = pitch; // Pitch applied only to camera
+
+    precomputeCosAndSin();
+  }
+});
 function addCube(
   material: THREE.MeshLambertMaterial,
   x: number,
@@ -152,44 +175,35 @@ function addCube(
 
 function processPlayerMovements() {
   if (isPressingW) {
-    camera.position.z -= (speed / fps) * cosAngle;
-    camera.position.x -= (speed / fps) * sinAngle;
+    cameraHolder.position.z -= (speed / fps) * cosAngle;
+    cameraHolder.position.x -= (speed / fps) * sinAngle;
   }
   if (isPressingA) {
-    camera.position.z += (speed / fps) * sinAngle;
-    camera.position.x -= (speed / fps) * cosAngle;
+    cameraHolder.position.z += (speed / fps) * sinAngle;
+    cameraHolder.position.x -= (speed / fps) * cosAngle;
   }
   if (isPressingS) {
-    camera.position.z += (speed / fps) * cosAngle;
-    camera.position.x += (speed / fps) * sinAngle;
+    cameraHolder.position.z += (speed / fps) * cosAngle;
+    cameraHolder.position.x += (speed / fps) * sinAngle;
   }
   if (isPressingD) {
-    camera.position.z -= (speed / fps) * sinAngle;
-    camera.position.x += (speed / fps) * cosAngle;
-  }
-  if (isPressingQ) {
-    camera.rotateY(rotationSpeed / fps);
-    processYAngle();
-  }
-  if (isPressingE) {
-    camera.rotateY(-rotationSpeed / fps);
-    processYAngle();
+    cameraHolder.position.z -= (speed / fps) * sinAngle;
+    cameraHolder.position.x += (speed / fps) * cosAngle;
   }
   setLightToCameraPosition(pointLight);
 }
 
 function setLightToCameraPosition(light: THREE.PointLight) {
-  light.position.set(camera.position.x, camera.position.y, camera.position.z);
+  light.position.set(
+    cameraHolder.position.x,
+    cameraHolder.position.y,
+    cameraHolder.position.z
+  );
 }
 
-function processYAngle() {
-  yAngle = camera.rotation.y;
-
-  if (camera.rotation.x !== 0.0) {
-    yAngle = Math.PI - camera.rotation.y;
-  }
-  cosAngle = Math.cos(yAngle);
-  sinAngle = Math.sin(yAngle);
+function precomputeCosAndSin() {
+  cosAngle = Math.cos(cameraHolder.rotation.y);
+  sinAngle = Math.sin(cameraHolder.rotation.y);
 }
 
 function addRoom(x: number, y: number, z: number) {
