@@ -47,6 +47,7 @@ let isPressingW = false;
 let isPressingA = false;
 let isPressingS = false;
 let isPressingD = false;
+precomputeCosAndSin();
 
 // Create renderer and bind it to the canvas
 const renderer = new THREE.WebGLRenderer({ canvas });
@@ -69,7 +70,9 @@ let textures: Record<string, THREE.Texture> = {};
 let materials: Record<string, THREE.MeshLambertMaterial> = {};
 const textureLoader = new THREE.TextureLoader();
 
+// Geometries
 const cubeGeometry = new THREE.BoxGeometry();
+const cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 16);
 
 textureList.forEach((t) => {
   textures[t] = textureLoader.load(`/${t}.jpg`);
@@ -168,9 +171,7 @@ function addCube(
 ): void {
   const cube = new THREE.Mesh(cubeGeometry, material);
   scene.add(cube);
-  cube.translateX(x);
-  cube.translateY(y);
-  cube.translateZ(z);
+  cube.position.set(x, y, z);
 }
 
 function processPlayerMovements() {
@@ -257,4 +258,13 @@ function addRoom(x: number, y: number, z: number) {
   addCube(materials.Rust, x + 3, y + 3, z + 2);
   addCube(materials.Rust, x + 3, y + 3, z + 3);
   addCube(materials.Rust, x + 4, y + 3, z + 2);
+
+  // Pipes
+  const cylinderMesh = new THREE.Mesh(
+    cylinderGeometry,
+    materials.CorrugatedSteel
+  );
+  cylinderMesh.position.set(x + 2, y + 1, z + 2);
+  cylinderMesh.rotateX(Math.PI / 2);
+  scene.add(cylinderMesh);
 }
