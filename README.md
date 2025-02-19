@@ -1,8 +1,13 @@
-# Yes.
+# Gan
+
+A 3D game fitting in a small exe standalone file
 
 ## Resources
 
 [Textures](https://ambientcg.com)
+
+- Raw: 1024 \* 1024 (1256 KB)
+- Compression => 256 \* 256, JPG quality 35 (6 KB)
 
 ## Run
 
@@ -23,9 +28,9 @@
 
 | Command                                                       | Size comparison |
 | ------------------------------------------------------------- | --------------- |
-| `wails build`                                                 | 9618 kb         |
-| `wails build --trimpath`                                      | 9597 kb         |
-| `wails build -trimpath -upx`                                  | 3402 kb         |
-| `wails build -trimpath -upx --best`                           | 3402 kb         |
-| `wails build -trimpath -upx -upxflags="--best --ultra-brute"` | 2876 kb         |
-| `wails build -trimpath -upx -upxflags="--lzma"`               | 2876 kb         |
+| `wails build`                                                 | 9618 KB         |
+| `wails build --trimpath`                                      | 9597 KB         |
+| `wails build -trimpath -upx`                                  | 3402 KB         |
+| `wails build -trimpath -upx --best`                           | 3402 KB         |
+| `wails build -trimpath -upx -upxflags="--best --ultra-brute"` | 2876 KB         |
+| `wails build -trimpath -upx -upxflags="--lzma"`               | 2876 KB         |

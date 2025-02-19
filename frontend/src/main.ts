@@ -227,22 +227,22 @@ function addRoom(x: number, y: number, z: number) {
   addCube(materials.PavingStones, x + 4, y + 0, z + 2);
 
   // Walls
-  addCube(materials.Metal, x + 1, y + 1, z + 0);
-  addCube(materials.Metal, x + 0, y + 1, z + 1);
-  addCube(materials.Metal, x + 3, y + 1, z + 0);
-  addCube(materials.Metal, x + 4, y + 1, z + 1);
-  addCube(materials.Metal, x + 0, y + 1, z + 3);
-  addCube(materials.Metal, x + 1, y + 1, z + 4);
-  addCube(materials.Metal, x + 3, y + 1, z + 4);
-  addCube(materials.Metal, x + 4, y + 1, z + 3);
-  addCube(materials.Metal, x + 1, y + 2, z + 0);
-  addCube(materials.Metal, x + 0, y + 2, z + 1);
-  addCube(materials.Metal, x + 3, y + 2, z + 0);
-  addCube(materials.Metal, x + 4, y + 2, z + 1);
-  addCube(materials.Metal, x + 0, y + 2, z + 3);
-  addCube(materials.Metal, x + 1, y + 2, z + 4);
-  addCube(materials.Metal, x + 3, y + 2, z + 4);
-  addCube(materials.Metal, x + 4, y + 2, z + 3);
+  addCube(materials.CorrugatedSteel, x + 1, y + 1, z + 0);
+  addCube(materials.CorrugatedSteel, x + 0, y + 1, z + 1);
+  addCube(materials.CorrugatedSteel, x + 3, y + 1, z + 0);
+  addCube(materials.CorrugatedSteel, x + 4, y + 1, z + 1);
+  addCube(materials.CorrugatedSteel, x + 0, y + 1, z + 3);
+  addCube(materials.CorrugatedSteel, x + 1, y + 1, z + 4);
+  addCube(materials.CorrugatedSteel, x + 3, y + 1, z + 4);
+  addCube(materials.CorrugatedSteel, x + 4, y + 1, z + 3);
+  addCube(materials.CorrugatedSteel, x + 1, y + 2, z + 0);
+  addCube(materials.CorrugatedSteel, x + 0, y + 2, z + 1);
+  addCube(materials.CorrugatedSteel, x + 3, y + 2, z + 0);
+  addCube(materials.CorrugatedSteel, x + 4, y + 2, z + 1);
+  addCube(materials.CorrugatedSteel, x + 0, y + 2, z + 3);
+  addCube(materials.CorrugatedSteel, x + 1, y + 2, z + 4);
+  addCube(materials.CorrugatedSteel, x + 3, y + 2, z + 4);
+  addCube(materials.CorrugatedSteel, x + 4, y + 2, z + 3);
 
   // Roof
   addCube(materials.Rust, x + 0, y + 3, z + 2);
