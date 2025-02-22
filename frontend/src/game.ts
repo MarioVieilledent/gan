@@ -49,7 +49,8 @@ class Game {
   eatBoxSize = 0.2; // block
 
   // Lights
-  pointLight = new THREE.PointLight(0xffbb66, 1.3);
+  pointLight = new THREE.PointLight(0xffbb66, 1.0);
+  ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
 
   // Load texture
   textureList = [
@@ -76,8 +77,9 @@ class Game {
 
   constructor(debug: boolean) {
     this.debug = debug;
-    if (!debug) {
-      this.debugText.style.display = "none";
+    if (debug) {
+      this.scene.add(this.ambientLight);
+      this.debugText.style.display = "block";
     }
 
     this.cameraHolder.add(this.camera);
@@ -151,9 +153,9 @@ class Game {
   ${this.cameraHolder.position.y.toFixed(2)},
   ${this.cameraHolder.position.z.toFixed(2)}</p>
   <br />
-  <p>rotation x${this.camera.rotation.x.toFixed(2)}</p>
-  <p>rotation y${this.cameraHolder.rotation.y.toFixed(2)}</p>
-  <p>rotation z${this.camera.rotation.z.toFixed(2)}</p>
+  <p>rotation x: ${this.camera.rotation.x.toFixed(2)}</p>
+  <p>rotation y: ${this.cameraHolder.rotation.y.toFixed(2)}</p>
+  <p>rotation z: ${this.camera.rotation.z.toFixed(2)}</p>
   <br />
   <p>cosAngle: ${this.cosAngle.toFixed(2)}</p>
   <p>sinAngle: ${this.sinAngle.toFixed(2)}</p>
