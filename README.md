@@ -2,6 +2,8 @@
 
 A 3D game fitting in a small exe standalone file
 
+![Screenshot preview](./prev.png)
+
 ## Resources
 
 [Textures](https://ambientcg.com)

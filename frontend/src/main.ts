@@ -1,6 +1,6 @@
 import Game from "./game";
 
-const game = new Game(true);
+const game = new Game(false);
 
 
 fetch("/map_test.txt").then((data) => {

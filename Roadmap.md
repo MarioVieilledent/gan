@@ -1,5 +1,7 @@
 # GAN Project Roadmap
 
+## February 2025
+
 - [x] Git repo + wails dev and build, threeJS, all working
 - [x] Display a texture
 - [x] Display a simple room with a corridor
@@ -14,3 +16,6 @@
 - [] Play sounds, music maybe
 - [] Game Design: need a plot, a story, a location, a time, a context, people?
 - [] Map design, design more objects, place them in map
+
+## Mars 2025
+

@@ -49,11 +49,12 @@ class Game {
   eatBoxSize = 0.2; // block
 
   // Lights
-  pointLight = new THREE.PointLight(0xffbb66, 1.0);
-  ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+  pointLight = new THREE.PointLight(0xffbb66, 0.0);
+  ambientLight = new THREE.AmbientLight(0xffdd99, 0.8);
 
   // Load texture
   textureList = [
+    "EmergencyExit",
     "Concrete",
     "Gravel",
     "Ground",
@@ -329,11 +330,13 @@ class Game {
     material: THREE.MeshLambertMaterial,
     x: number,
     y: number,
-    z: number
+    z: number,
+    rotated: boolean
   ): void {
     const door = new THREE.Mesh(this.cubeGeometry, material);
     door.scale.y = 1.8;
     door.scale.z = 0.2;
+    if (rotated) door.rotateY(Math.PI / 2);
     door.position.set(x, y + 0.4, z);
     this.scene.add(door);
 
@@ -343,34 +346,66 @@ class Game {
     this.scene.add(roofDoor);
   }
 
+  addEmergencyExit(x: number, y: number, z: number, rotated: boolean): void {
+    const sign = new THREE.Mesh(
+      this.cubeGeometry,
+      this.materials.EmergencyExit
+    );
+    sign.scale.x = 0.5;
+    sign.scale.y = 0.25;
+    sign.scale.z = 0.1;
+    if (rotated) sign.rotateY(Math.PI / 2);
+    sign.position.set(x, y + 1.4, z);
+    this.scene.add(sign);
+
+    const signLight1 = new THREE.PointLight(0x00ff00, 0.05);
+    const signLight2 = new THREE.PointLight(0x00ff00, 0.05);
+    if (rotated) {
+      signLight1.position.set(x - 0.5, y + 1.1, z);
+      signLight2.position.set(x + 0.5, y + 1.1, z);
+    } else {
+      signLight1.position.set(x, y + 1.1, z - 0.5);
+      signLight2.position.set(x, y + 1.1, z + 0.5);
+    }
+    this.scene.add(signLight1);
+    this.scene.add(signLight2);
+  }
+
   parseAndBuildMap(map: string) {
     map.split("\n").forEach((line, z) => {
       line.split("").forEach((char, x) => {
+        // In any case, add floor and roof;
+        this.addCube(this.materials.Concrete, x, 0, z);
+        this.addCube(this.materials.Plaster, x, 3, z);
+
         switch (char) {
           case "w": {
-            // Wall
             this.addCube(this.materials.Rust, x, 1, z);
             this.addCube(this.materials.Rust, x, 2, z);
             break;
           }
-          case ".": {
-            // Floor + roof
-            this.addCube(this.materials.Concrete, x, 0, z);
-            this.addCube(this.materials.Plaster, x, 3, z);
+          case "d": {
+            // Horizontal door
+            this.addDoor(this.materials.Steel, x, 1, z, false);
             break;
           }
-          case "d": {
-            // Door + floor + roof
-            this.addDoor(this.materials.Steel, x, 1, z);
-            this.addCube(this.materials.Concrete, x, 0, z);
-            this.addCube(this.materials.Plaster, x, 3, z);
+          case "D": {
+            // Vertical door
+            this.addDoor(this.materials.Steel, x, 1, z, true);
+            break;
+          }
+          case "e": {
+            // Horizontal emergency exit
+            this.addEmergencyExit(x, 1, z, true);
+            break;
+          }
+          case "E": {
+            // Vertical emergency exit
+            this.addEmergencyExit(x, 1, z, false);
             break;
           }
           case "p": {
-            // Player + floor + roof
-            this.addCube(this.materials.Concrete, x, 0, z);
-            this.addCube(this.materials.Concrete, x, 0, z);
-            this.addCube(this.materials.Plaster, x, 3, z);
+            // Player
             this.cameraHolder.position.x = x;
             this.cameraHolder.position.z = z;
             break;
