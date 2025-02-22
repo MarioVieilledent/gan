@@ -32,7 +32,6 @@ class Game {
     0.1,
     1000
   );
-
   cameraHolder = new THREE.Group();
 
   // Player
@@ -43,6 +42,11 @@ class Game {
   isPressingA = false;
   isPressingS = false;
   isPressingD = false;
+  collideTop = false;
+  collideBottom = false;
+  collideLeft = false;
+  collideRight = false;
+  eatBoxSize = 0.2; // block
 
   // Lights
   pointLight = new THREE.PointLight(0xffbb66, 1.3);
@@ -70,10 +74,9 @@ class Game {
   fps: number = 60.0;
   previousFrame = new Date().getTime();
 
-  constructor() {
-    console.log("test");
-
-    if (!this.debug) {
+  constructor(debug: boolean) {
+    this.debug = debug;
+    if (!debug) {
       this.debugText.style.display = "none";
     }
 
@@ -148,9 +151,12 @@ class Game {
   ${this.cameraHolder.position.y.toFixed(2)},
   ${this.cameraHolder.position.z.toFixed(2)}</p>
   <br />
-  <p>${this.camera.rotation.x.toFixed(2)}</p>
-  <p>${this.cameraHolder.rotation.y.toFixed(2)}</p>
-  <p>${this.camera.rotation.z.toFixed(2)}</p>
+  <p>rotation x${this.camera.rotation.x.toFixed(2)}</p>
+  <p>rotation y${this.cameraHolder.rotation.y.toFixed(2)}</p>
+  <p>rotation z${this.camera.rotation.z.toFixed(2)}</p>
+  <br />
+  <p>cosAngle: ${this.cosAngle.toFixed(2)}</p>
+  <p>sinAngle: ${this.sinAngle.toFixed(2)}</p>
   `;
   }
 
@@ -170,23 +176,127 @@ class Game {
   }
 
   processPlayerMovements() {
+    const mightCollideObjs = this.scene.children.filter(
+      (object) =>
+        object.position.distanceTo(this.cameraHolder.position) < 2 &&
+        object.type === "Mesh" &&
+        object.position.y > 0.25 &&
+        object.position.y < 1.75
+    );
+
+    const camTop = new THREE.Vector3(
+      this.cameraHolder.position.x,
+      this.cameraHolder.position.y,
+      this.cameraHolder.position.z - this.eatBoxSize
+    );
+
+    const camRight = new THREE.Vector3(
+      this.cameraHolder.position.x + this.eatBoxSize,
+      this.cameraHolder.position.y,
+      this.cameraHolder.position.z
+    );
+
+    const camBottom = new THREE.Vector3(
+      this.cameraHolder.position.x,
+      this.cameraHolder.position.y,
+      this.cameraHolder.position.z + this.eatBoxSize
+    );
+
+    const camLeft = new THREE.Vector3(
+      this.cameraHolder.position.x - this.eatBoxSize,
+      this.cameraHolder.position.y,
+      this.cameraHolder.position.z
+    );
+
+    mightCollideObjs.forEach((box) =>
+      this.collide(box, camTop, camRight, camBottom, camLeft)
+    );
+
     if (this.isPressingW) {
-      this.cameraHolder.position.z -= (this.speed / this.fps) * this.cosAngle;
-      this.cameraHolder.position.x -= (this.speed / this.fps) * this.sinAngle;
+      if (
+        (this.cosAngle > 0 && !this.collideTop) ||
+        (this.cosAngle < 0 && !this.collideBottom)
+      ) {
+        this.cameraHolder.position.z -= (this.speed / this.fps) * this.cosAngle;
+      }
+      if (
+        (this.sinAngle > 0 && !this.collideLeft) ||
+        (this.sinAngle < 0 && !this.collideRight)
+      ) {
+        this.cameraHolder.position.x -= (this.speed / this.fps) * this.sinAngle;
+      }
     }
     if (this.isPressingA) {
-      this.cameraHolder.position.z += (this.speed / this.fps) * this.sinAngle;
-      this.cameraHolder.position.x -= (this.speed / this.fps) * this.cosAngle;
+      if (
+        (this.sinAngle > 0 && !this.collideBottom) ||
+        (this.sinAngle < 0 && !this.collideTop)
+      ) {
+        this.cameraHolder.position.z += (this.speed / this.fps) * this.sinAngle;
+      }
+      if (
+        (this.cosAngle > 0 && !this.collideLeft) ||
+        (this.cosAngle < 0 && !this.collideRight)
+      ) {
+        this.cameraHolder.position.x -= (this.speed / this.fps) * this.cosAngle;
+      }
     }
     if (this.isPressingS) {
-      this.cameraHolder.position.z += (this.speed / this.fps) * this.cosAngle;
-      this.cameraHolder.position.x += (this.speed / this.fps) * this.sinAngle;
+      if (
+        (this.cosAngle > 0 && !this.collideBottom) ||
+        (this.cosAngle < 0 && !this.collideTop)
+      ) {
+        this.cameraHolder.position.z += (this.speed / this.fps) * this.cosAngle;
+      }
+      if (
+        (this.sinAngle > 0 && !this.collideRight) ||
+        (this.sinAngle < 0 && !this.collideLeft)
+      ) {
+        this.cameraHolder.position.x += (this.speed / this.fps) * this.sinAngle;
+      }
     }
     if (this.isPressingD) {
-      this.cameraHolder.position.z -= (this.speed / this.fps) * this.sinAngle;
-      this.cameraHolder.position.x += (this.speed / this.fps) * this.cosAngle;
+      if (
+        (this.sinAngle > 0 && !this.collideTop) ||
+        (this.sinAngle < 0 && !this.collideBottom)
+      ) {
+        this.cameraHolder.position.z -= (this.speed / this.fps) * this.sinAngle;
+      }
+      if (
+        (this.cosAngle > 0 && !this.collideRight) ||
+        (this.cosAngle < 0 && !this.collideLeft)
+      ) {
+        this.cameraHolder.position.x += (this.speed / this.fps) * this.cosAngle;
+      }
     }
     this.setLightToCameraPosition(this.pointLight);
+
+    // Reset collisions
+    this.collideTop = false;
+    this.collideRight = false;
+    this.collideBottom = false;
+    this.collideLeft = false;
+  }
+
+  collide(
+    box: THREE.Object3D,
+    camTop: THREE.Vector3,
+    camRight: THREE.Vector3,
+    camBottom: THREE.Vector3,
+    camLeft: THREE.Vector3
+  ) {
+    const boundingBox = new THREE.Box3().setFromObject(box);
+    if (boundingBox.containsPoint(camTop)) {
+      this.collideTop = true;
+    }
+    if (boundingBox.containsPoint(camRight)) {
+      this.collideRight = true;
+    }
+    if (boundingBox.containsPoint(camBottom)) {
+      this.collideBottom = true;
+    }
+    if (boundingBox.containsPoint(camLeft)) {
+      this.collideLeft = true;
+    }
   }
 
   setLightToCameraPosition(light: THREE.PointLight) {
@@ -222,36 +332,40 @@ class Game {
     const door = new THREE.Mesh(this.cubeGeometry, material);
     door.scale.y = 1.8;
     door.scale.z = 0.2;
-    door.position.set(x, y +0.4, z);
+    door.position.set(x, y + 0.4, z);
     this.scene.add(door);
-    
+
     const roofDoor = new THREE.Mesh(this.cubeGeometry, this.materials.Rust);
     roofDoor.position.set(x, 2.4, z);
     roofDoor.scale.y = 0.2;
     this.scene.add(roofDoor);
   }
 
-  parseMap(map: string) {
-    map.split('\n').forEach((line, z) => {
-      line.split('').forEach((char, x) => {
-        switch(char) {
-          case 'w': { // Wall
+  parseAndBuildMap(map: string) {
+    map.split("\n").forEach((line, z) => {
+      line.split("").forEach((char, x) => {
+        switch (char) {
+          case "w": {
+            // Wall
             this.addCube(this.materials.Rust, x, 1, z);
             this.addCube(this.materials.Rust, x, 2, z);
             break;
           }
-          case '.': { // Floor + roof
+          case ".": {
+            // Floor + roof
             this.addCube(this.materials.Concrete, x, 0, z);
             this.addCube(this.materials.Plaster, x, 3, z);
             break;
           }
-          case 'd': { // Door + floor + roof
+          case "d": {
+            // Door + floor + roof
             this.addDoor(this.materials.Steel, x, 1, z);
             this.addCube(this.materials.Concrete, x, 0, z);
             this.addCube(this.materials.Plaster, x, 3, z);
             break;
           }
-          case 'p': { // Player + floor + roof
+          case "p": {
+            // Player + floor + roof
             this.addCube(this.materials.Concrete, x, 0, z);
             this.addCube(this.materials.Concrete, x, 0, z);
             this.addCube(this.materials.Plaster, x, 3, z);
@@ -261,9 +375,8 @@ class Game {
           }
         }
       });
-    })
+    });
   }
-
 }
 
 export default Game;

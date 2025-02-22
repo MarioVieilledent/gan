@@ -9,12 +9,8 @@
 - [x] Refactor into classes
 - [x] Icon for exe and favicon
 - [x] Specify map in JSON or TXT, read, parse, build map
-- [] Collisions, use MBR of objects?
+- [x] Collisions, use MBR of objects?
+- [] Middle cursor to interact with object, open and close doors
 - [] Play sounds, music maybe
-- [] Game Design: need a plot, a story, a location, a time, a context, people
-- [] Map design
-- []
-- []
-- []
-- []
-- []
+- [] Game Design: need a plot, a story, a location, a time, a context, people?
+- [] Map design, design more objects, place them in map
