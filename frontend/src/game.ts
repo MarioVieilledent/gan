@@ -49,11 +49,14 @@ class Game {
 
   // Load texture
   textureList = [
-    "PavingStones",
-    "Rust",
-    "Metal",
-    "CorrugatedSteel",
     "Concrete",
+    "Gravel",
+    "Ground",
+    "Metal",
+    "PavingStones",
+    "Plaster",
+    "Rust",
+    "Steel",
   ];
   textures: Record<string, THREE.Texture> = {};
   materials: Record<string, THREE.MeshLambertMaterial> = {};
@@ -76,10 +79,7 @@ class Game {
 
     this.cameraHolder.add(this.camera);
     this.scene.add(this.cameraHolder);
-
-    this.cameraHolder.position.x = 2.0;
     this.cameraHolder.position.y = 1.5;
-    this.cameraHolder.position.z = 3.0;
 
     this.precomputeCosAndSin();
 
@@ -95,12 +95,6 @@ class Game {
         map: this.textures[t],
       });
     });
-
-    for (let x = -4; x <= 4; x++) {
-      for (let y = -4; y <= 4; y++) {
-        this.addRoom(x, 0, y);
-      }
-    }
 
     // Handle window resize
     window.addEventListener("resize", () => {
@@ -175,17 +169,6 @@ class Game {
     this.renderer.render(this.scene, this.camera);
   }
 
-  addCube(
-    material: THREE.MeshLambertMaterial,
-    x: number,
-    y: number,
-    z: number
-  ): void {
-    const cube = new THREE.Mesh(this.cubeGeometry, material);
-    this.scene.add(cube);
-    cube.position.set(x, y, z);
-  }
-
   processPlayerMovements() {
     if (this.isPressingW) {
       this.cameraHolder.position.z -= (this.speed / this.fps) * this.cosAngle;
@@ -219,67 +202,68 @@ class Game {
     this.sinAngle = Math.sin(this.cameraHolder.rotation.y);
   }
 
-  addRoom(x: number, y: number, z: number) {
-    x *= 5;
-    y *= 5;
-    z *= 5;
-    // Ground
-    this.addCube(this.materials.PavingStones, x + 0, y + 0, z + 2);
-    this.addCube(this.materials.PavingStones, x + 1, y + 0, z + 1);
-    this.addCube(this.materials.PavingStones, x + 1, y + 0, z + 2);
-    this.addCube(this.materials.PavingStones, x + 1, y + 0, z + 3);
-    this.addCube(this.materials.PavingStones, x + 2, y + 0, z + 0);
-    this.addCube(this.materials.PavingStones, x + 2, y + 0, z + 1);
-    this.addCube(this.materials.PavingStones, x + 2, y + 0, z + 2);
-    this.addCube(this.materials.PavingStones, x + 2, y + 0, z + 3);
-    this.addCube(this.materials.PavingStones, x + 2, y + 0, z + 4);
-    this.addCube(this.materials.PavingStones, x + 3, y + 0, z + 1);
-    this.addCube(this.materials.PavingStones, x + 3, y + 0, z + 2);
-    this.addCube(this.materials.PavingStones, x + 3, y + 0, z + 3);
-    this.addCube(this.materials.PavingStones, x + 4, y + 0, z + 2);
-
-    // Walls
-    this.addCube(this.materials.CorrugatedSteel, x + 1, y + 1, z + 0);
-    this.addCube(this.materials.CorrugatedSteel, x + 0, y + 1, z + 1);
-    this.addCube(this.materials.CorrugatedSteel, x + 3, y + 1, z + 0);
-    this.addCube(this.materials.CorrugatedSteel, x + 4, y + 1, z + 1);
-    this.addCube(this.materials.CorrugatedSteel, x + 0, y + 1, z + 3);
-    this.addCube(this.materials.CorrugatedSteel, x + 1, y + 1, z + 4);
-    this.addCube(this.materials.CorrugatedSteel, x + 3, y + 1, z + 4);
-    this.addCube(this.materials.CorrugatedSteel, x + 4, y + 1, z + 3);
-    this.addCube(this.materials.CorrugatedSteel, x + 1, y + 2, z + 0);
-    this.addCube(this.materials.CorrugatedSteel, x + 0, y + 2, z + 1);
-    this.addCube(this.materials.CorrugatedSteel, x + 3, y + 2, z + 0);
-    this.addCube(this.materials.CorrugatedSteel, x + 4, y + 2, z + 1);
-    this.addCube(this.materials.CorrugatedSteel, x + 0, y + 2, z + 3);
-    this.addCube(this.materials.CorrugatedSteel, x + 1, y + 2, z + 4);
-    this.addCube(this.materials.CorrugatedSteel, x + 3, y + 2, z + 4);
-    this.addCube(this.materials.CorrugatedSteel, x + 4, y + 2, z + 3);
-
-    // Roof
-    this.addCube(this.materials.Rust, x + 0, y + 3, z + 2);
-    this.addCube(this.materials.Rust, x + 1, y + 3, z + 1);
-    this.addCube(this.materials.Rust, x + 1, y + 3, z + 2);
-    this.addCube(this.materials.Rust, x + 1, y + 3, z + 3);
-    this.addCube(this.materials.Rust, x + 2, y + 3, z + 0);
-    this.addCube(this.materials.Rust, x + 2, y + 3, z + 1);
-    this.addCube(this.materials.Rust, x + 2, y + 3, z + 2);
-    this.addCube(this.materials.Rust, x + 2, y + 3, z + 3);
-    this.addCube(this.materials.Rust, x + 2, y + 3, z + 4);
-    this.addCube(this.materials.Rust, x + 3, y + 3, z + 1);
-    this.addCube(this.materials.Rust, x + 3, y + 3, z + 2);
-    this.addCube(this.materials.Rust, x + 3, y + 3, z + 3);
-    this.addCube(this.materials.Rust, x + 4, y + 3, z + 2);
-
-    // Pipes
-    const cylinderMesh = new THREE.Mesh(
-      this.cylinderGeometry,
-      this.materials.CorrugatedSteel
-    );
-    cylinderMesh.position.set(x + 2, y + 1, z + 2);
-    cylinderMesh.rotateX(Math.PI / 2);
-    this.scene.add(cylinderMesh);
+  addCube(
+    material: THREE.MeshLambertMaterial,
+    x: number,
+    y: number,
+    z: number
+  ): void {
+    const cube = new THREE.Mesh(this.cubeGeometry, material);
+    this.scene.add(cube);
+    cube.position.set(x, y, z);
   }
+
+  addDoor(
+    material: THREE.MeshLambertMaterial,
+    x: number,
+    y: number,
+    z: number
+  ): void {
+    const door = new THREE.Mesh(this.cubeGeometry, material);
+    door.scale.y = 1.8;
+    door.scale.z = 0.2;
+    door.position.set(x, y +0.4, z);
+    this.scene.add(door);
+    
+    const roofDoor = new THREE.Mesh(this.cubeGeometry, this.materials.Rust);
+    roofDoor.position.set(x, 2.4, z);
+    roofDoor.scale.y = 0.2;
+    this.scene.add(roofDoor);
+  }
+
+  parseMap(map: string) {
+    map.split('\n').forEach((line, z) => {
+      line.split('').forEach((char, x) => {
+        switch(char) {
+          case 'w': { // Wall
+            this.addCube(this.materials.Rust, x, 1, z);
+            this.addCube(this.materials.Rust, x, 2, z);
+            break;
+          }
+          case '.': { // Floor + roof
+            this.addCube(this.materials.Concrete, x, 0, z);
+            this.addCube(this.materials.Plaster, x, 3, z);
+            break;
+          }
+          case 'd': { // Door + floor + roof
+            this.addDoor(this.materials.Steel, x, 1, z);
+            this.addCube(this.materials.Concrete, x, 0, z);
+            this.addCube(this.materials.Plaster, x, 3, z);
+            break;
+          }
+          case 'p': { // Player + floor + roof
+            this.addCube(this.materials.Concrete, x, 0, z);
+            this.addCube(this.materials.Concrete, x, 0, z);
+            this.addCube(this.materials.Plaster, x, 3, z);
+            this.cameraHolder.position.x = x;
+            this.cameraHolder.position.z = z;
+            break;
+          }
+        }
+      });
+    })
+  }
+
 }
 
 export default Game;
