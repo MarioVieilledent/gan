@@ -4,6 +4,8 @@ import {
   WindowUnfullscreen,
 } from "../wailsjs/runtime/runtime";
 
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 class Game {
   // Config
   debug = true;
@@ -49,8 +51,9 @@ class Game {
   eatBoxSize = 0.2; // block
 
   // Lights
+  ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
   pointLight = new THREE.PointLight(0xffbb66, 0.0);
-  ambientLight = new THREE.AmbientLight(0xffdd99, 0.8);
 
   // Load texture
   textureList = [
@@ -76,10 +79,15 @@ class Game {
   fps: number = 60.0;
   previousFrame = new Date().getTime();
 
+  // Model Loading
+  loader = new GLTFLoader();
+
+  // Model list
+  models: THREE.Group[] = [];
+
   constructor(debug: boolean) {
     this.debug = debug;
     if (debug) {
-      this.scene.add(this.ambientLight);
       this.debugText.style.display = "block";
     }
 
@@ -94,12 +102,22 @@ class Game {
 
     this.setLightToCameraPosition(this.pointLight);
     this.scene.add(this.pointLight);
+    this.scene.add(this.ambientLight);
+    this.directionalLight.position.set(-3, 10, -10);
+    this.scene.add(this.directionalLight);
 
     this.textureList.forEach((t) => {
       this.textures[t] = this.textureLoader.load(`/${t}.jpg`);
       this.materials[t] = new THREE.MeshLambertMaterial({
         map: this.textures[t],
       });
+    });
+
+    this.loader.load("/second_tree.glb", (gltf) => {
+      const model = gltf.scene;
+      model.position.set(-5, 0, 3);
+      this.models.push(model);
+      this.scene.add(model);
     });
 
     // Handle window resize
@@ -166,6 +184,12 @@ class Game {
   // Animation loop
   animate() {
     requestAnimationFrame(() => this.animate());
+
+    this.models.forEach((model) => {
+      model.rotation.y += 0.001;
+    });
+
+    this.directionalLight.rotation.x += 0.01;
 
     const now = new Date().getTime();
     this.fps = 1000.0 / (now - this.previousFrame);
