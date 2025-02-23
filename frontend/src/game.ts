@@ -3,8 +3,7 @@ import {
   WindowFullscreen,
   WindowUnfullscreen,
 } from "../wailsjs/runtime/runtime";
-
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { loadModel } from "./modelLoader";
 
 class Game {
   // Config
@@ -79,9 +78,6 @@ class Game {
   fps: number = 60.0;
   previousFrame = new Date().getTime();
 
-  // Model Loading
-  loader = new GLTFLoader();
-
   // Model list
   models: THREE.Group[] = [];
 
@@ -113,12 +109,8 @@ class Game {
       });
     });
 
-    this.loader.load("/second_tree.glb", (gltf) => {
-      const model = gltf.scene;
-      model.position.set(-5, 0, 3);
-      this.models.push(model);
-      this.scene.add(model);
-    });
+    loadModel(this.scene, this.models, "second_tree", -5, 0, 3);
+    loadModel(this.scene, this.models, "first_rock", -2, 0, 4);
 
     // Handle window resize
     window.addEventListener("resize", () => {
