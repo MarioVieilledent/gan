@@ -1,18 +1,26 @@
 import * as THREE from "three";
+import { getElevation } from "./terrain";
 
 export class Player {
   speed = 3.0; // block/s // Good speed is 3
+
   cosAngle = 1.0;
   sinAngle = 0.0;
+
   isPressingW = false;
   isPressingA = false;
   isPressingS = false;
   isPressingD = false;
+
   collideTop = false;
   collideBottom = false;
   collideLeft = false;
   collideRight = false;
+
   eatBoxSize = 0.2; // block
+
+  // Camera height compared to feet position
+  cameraHeight = 1.5;
 
   // Mouse camera control
   yaw = 0;
@@ -75,12 +83,15 @@ export class Player {
   processPlayerMovements(
     scene: THREE.Scene,
     cameraHolder: THREE.Group,
-    fps: number
+    fps: number,
+    renderDistance: number,
+    backgroundImage: THREE.Mesh | null
   ) {
     const mightCollideObjs = scene.children.filter(
       (object) =>
         object.position.distanceTo(cameraHolder.position) < 2 &&
         object.type === "Mesh" &&
+        object.name !== "backgroundImage" &&
         object.position.y > 0.25 &&
         object.position.y < 1.75
     );
@@ -127,6 +138,7 @@ export class Player {
         cameraHolder.position.x -= (this.speed / fps) * this.sinAngle;
       }
     }
+
     if (this.isPressingA) {
       if (
         (this.sinAngle > 0 && !this.collideBottom) ||
@@ -141,6 +153,7 @@ export class Player {
         cameraHolder.position.x -= (this.speed / fps) * this.cosAngle;
       }
     }
+
     if (this.isPressingS) {
       if (
         (this.cosAngle > 0 && !this.collideBottom) ||
@@ -155,6 +168,7 @@ export class Player {
         cameraHolder.position.x += (this.speed / fps) * this.sinAngle;
       }
     }
+
     if (this.isPressingD) {
       if (
         (this.sinAngle > 0 && !this.collideTop) ||
@@ -168,6 +182,32 @@ export class Player {
       ) {
         cameraHolder.position.x += (this.speed / fps) * this.cosAngle;
       }
+    }
+
+    // If player has moved
+    if (true) {
+      // Set player's height
+      this.cameraHolder.position.setY(
+        getElevation(cameraHolder.position.x, cameraHolder.position.z) +
+          this.cameraHeight
+      );
+
+      // Show only close objects
+      scene.children.forEach((object) => {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Group) {
+          const distance = object.position.distanceTo(
+            this.cameraHolder.position
+          );
+          object.visible = distance < renderDistance;
+        }
+      });
+
+      // Set background texture sphere in the center
+      backgroundImage?.position.set(
+        cameraHolder.position.x,
+        cameraHolder.position.y,
+        cameraHolder.position.z
+      );
     }
 
     // Reset collisions

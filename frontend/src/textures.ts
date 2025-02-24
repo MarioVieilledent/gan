@@ -23,7 +23,7 @@ export class Textures {
   textureLoader = new THREE.TextureLoader();
   cubeTextureloader = new THREE.CubeTextureLoader();
 
-  constructor(scene: THREE.Scene) {
+  constructor() {
     // Load textures
     textureList.forEach((t) => {
       this.textures[t] = this.textureLoader.load(`/${t}.jpg`);
@@ -36,14 +36,15 @@ export class Textures {
     backgroundList.forEach((bg) => {
       this.backgrounds[bg] = this.textureLoader.load(`/${bg}.jpg`);
     });
+  }
 
+  loadBackground(bgName: string): THREE.Mesh {
     // Create a large sphere to surround the camera
-    const geometry = new THREE.SphereGeometry(500, 16, 16);
+    const geometry = new THREE.SphereGeometry(500, 32, 16);
     const material = new THREE.MeshBasicMaterial({
-      map: this.backgrounds.clouds,
+      map: this.backgrounds[bgName],
       side: THREE.BackSide, // Ensures the texture is on the inside of the sphere
     });
-    const sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
+    return new THREE.Mesh(geometry, material);
   }
 }

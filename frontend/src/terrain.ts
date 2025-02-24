@@ -20,8 +20,8 @@ export function createTerrainChunk(
   plane.rotateX(-Math.PI / 2);
 
   const pos = plane.attributes.position;
-  for (let i = 0; i < pos.count; i += 3) {
-    pos.setY(i, Math.random() * 0.5);
+  for (let i = 0; i < pos.count; i++) {
+    pos.setY(i, getElevation(pos.getX(i) + x, pos.getZ(i) + z));
   }
 
   pos.needsUpdate = true;
@@ -30,4 +30,11 @@ export function createTerrainChunk(
   mesh.position.set(x, y, z);
 
   scene.add(mesh);
+}
+
+export function getElevation(x: number, z: number): number {
+  const scale = 0.05; // Controls the frequency of the hills/valleys
+  const height = 10; // Controls the maximum elevation range
+
+  return Math.sin(x * scale) * Math.cos(z * scale) * height;
 }

@@ -3,10 +3,11 @@ import {
   WindowFullscreen,
   WindowUnfullscreen,
 } from "../wailsjs/runtime/runtime";
-import { loadModel } from "./modelLoader";
 import { Player } from "./player";
 import { Lights } from "./lights";
 import { Textures } from "./textures";
+import { getElevation } from "./terrain";
+import { Models } from "./models";
 
 export class Game {
   // Config
@@ -23,14 +24,20 @@ export class Game {
   renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById("canvas") as HTMLCanvasElement,
   });
+  renderDistance = 100;
+  backgroundImage: THREE.Mesh | null = null;
 
+  // Player
   player = new Player();
 
   // Lights
   lights = new Lights(this.scene);
 
   // Textures
-  textures = new Textures(this.scene);
+  textures = new Textures();
+
+  // 3D Models
+  models = new Models(this.scene);
 
   // Geometries
   cubeGeometry = new THREE.BoxGeometry();
@@ -40,21 +47,22 @@ export class Game {
   fps: number = 60.0;
   previousFrame = new Date().getTime();
 
-  // Model list
-  models: THREE.Group[] = [];
-
   constructor(debug: boolean) {
     this.debug = debug;
     if (debug) {
       this.debugText.style.display = "block";
     }
 
+    // Set camera
     this.scene.add(this.player.cameraHolder);
+
+    // Set lights position
     this.player.setLightToCameraPosition(this.lights.pointLight);
 
-    // 3D Models
-    loadModel(this.scene, this.models, "tree", -5, 0, 3);
-    loadModel(this.scene, this.models, "rock", -2, 0, 4);
+    // Load and set background image
+    this.backgroundImage = this.textures.loadBackground("clouds");
+    this.backgroundImage.name = "backgroundImage";
+    this.scene.add(this.backgroundImage);
 
     // Create renderer and bind it to the canvas
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -96,16 +104,17 @@ export class Game {
   <br />
   <p>cosAngle: ${this.player.cosAngle.toFixed(2)}</p>
   <p>sinAngle: ${this.player.sinAngle.toFixed(2)}</p>
+  <br />
+  <p>elevation: ${getElevation(
+    Math.round(cameraHolder.position.x),
+    Math.round(cameraHolder.position.z)
+  ).toFixed(2)}</p>
   `;
   }
 
   // Animation loop
   animate() {
     requestAnimationFrame(() => this.animate());
-
-    this.models.forEach((model) => {
-      model.rotation.y += 0.001;
-    });
 
     const now = new Date().getTime();
     this.fps = 1000.0 / (now - this.previousFrame);
@@ -114,7 +123,9 @@ export class Game {
     this.player.processPlayerMovements(
       this.scene,
       this.player.cameraHolder,
-      this.fps
+      this.fps,
+      this.renderDistance,
+      this.backgroundImage
     );
     this.player.setLightToCameraPosition(this.lights.pointLight);
 

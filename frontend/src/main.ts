@@ -1,7 +1,7 @@
 import { Game } from "./game";
 import { CHUNK_SIZE, createTerrainChunk } from "./terrain";
 
-const game = new Game(false);
+const game = new Game(true);
 
 fetch("/map_test.txt").then((data) => {
   data.text().then((textMap) => {

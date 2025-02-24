@@ -15,6 +15,7 @@
 - [x] Specify map in JSON or TXT, read, parse, build map
 - [x] Collisions, use MBR of objects?
 - [x] Create blender 3d model with colors and use it
+- [] Buggy collisions, make 3d realistic collisions and eatbox
 - [] Middle cursor to interact with object, open and close doors
 - [] Play sounds, music maybe
 - [] Game Design: need a plot, a story, a location, a time, a context, people?
