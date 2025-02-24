@@ -14,7 +14,26 @@ export class Player {
   collideRight = false;
   eatBoxSize = 0.2; // block
 
+  // Mouse camera control
+  yaw = 0;
+  pitch = 0;
+  sensitivity = 0.002;
+
+  // Camera
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  cameraHolder = new THREE.Group();
+
   constructor() {
+    this.cameraHolder.add(this.camera);
+    this.cameraHolder.position.y = 1.5;
+
+    this.precomputeCosAndSin(this.cameraHolder);
+
     window.addEventListener("keydown", (e) => {
       if (e.code === "KeyW") this.isPressingW = true;
       if (e.code === "KeyA") this.isPressingA = true;
@@ -28,6 +47,29 @@ export class Player {
       if (e.code === "KeyS") this.isPressingS = false;
       if (e.code === "KeyD") this.isPressingD = false;
     });
+
+    // Listen to mouse movement
+    window.addEventListener("mousemove", (event) => {
+      event.preventDefault();
+      if (document.pointerLockElement === document.body) {
+        this.yaw -= event.movementX * this.sensitivity;
+        this.pitch -= event.movementY * this.sensitivity;
+        this.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.pitch)); // Clamp pitch to avoid flipping
+
+        this.cameraHolder.rotation.y = this.yaw; // Yaw applied to parent group
+        this.camera.rotation.x = this.pitch; // Pitch applied only to camera
+
+        this.precomputeCosAndSin(this.cameraHolder);
+      }
+    });
+  }
+
+  setLightToCameraPosition(light: THREE.PointLight) {
+    light.position.set(
+      this.cameraHolder.position.x,
+      this.cameraHolder.position.y,
+      this.cameraHolder.position.z
+    );
   }
 
   processPlayerMovements(

@@ -11,11 +11,6 @@ class Game {
   debug = true;
   isFullScreen = false;
 
-  // Mouse camera control
-  yaw = 0;
-  pitch = 0;
-  sensitivity = 0.002;
-
   // Get the canvas element from HTML
   debugText = document.getElementById("debug-text") as HTMLCanvasElement;
 
@@ -26,15 +21,6 @@ class Game {
   renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById("canvas") as HTMLCanvasElement,
   });
-
-  // Camera
-  camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  cameraHolder = new THREE.Group();
 
   player = new Player();
 
@@ -76,16 +62,12 @@ class Game {
       this.debugText.style.display = "block";
     }
 
-    this.cameraHolder.add(this.camera);
-    this.scene.add(this.cameraHolder);
-    this.cameraHolder.position.y = 1.5;
-
-    this.player.precomputeCosAndSin(this.cameraHolder);
+    this.scene.add(this.player.cameraHolder);
 
     // Create renderer and bind it to the canvas
     this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-    this.setLightToCameraPosition(this.pointLight);
+    this.player.setLightToCameraPosition(this.pointLight);
     this.scene.add(this.pointLight);
     this.scene.add(this.ambientLight);
     this.directionalLight.position.set(-3, 10, -10);
@@ -104,8 +86,8 @@ class Game {
     // Handle window resize
     window.addEventListener("resize", () => {
       this.renderer.setSize(window.innerWidth, window.innerHeight);
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
+      this.player.camera.aspect = window.innerWidth / window.innerHeight;
+      this.player.camera.updateProjectionMatrix();
     });
 
     window.addEventListener("keyup", (e) => {
@@ -119,32 +101,21 @@ class Game {
     document.body.addEventListener("click", () => {
       document.body.requestPointerLock();
     });
-
-    // Listen to mouse movement
-    window.addEventListener("mousemove", (event) => {
-      if (document.pointerLockElement === document.body) {
-        this.yaw -= event.movementX * this.sensitivity;
-        this.pitch -= event.movementY * this.sensitivity;
-        this.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.pitch)); // Clamp pitch to avoid flipping
-
-        this.cameraHolder.rotation.y = this.yaw; // Yaw applied to parent group
-        this.camera.rotation.x = this.pitch; // Pitch applied only to camera
-
-        this.player.precomputeCosAndSin(this.cameraHolder);
-      }
-    });
   }
 
   writeDebugData() {
+    const camera = this.player.camera;
+    const cameraHolder = this.player.cameraHolder;
+
     this.debugText.innerHTML = `
   <p>FPS: ${this.fps.toFixed(1)}</p>
-  <p>${this.cameraHolder.position.x.toFixed(2)},
-  ${this.cameraHolder.position.y.toFixed(2)},
-  ${this.cameraHolder.position.z.toFixed(2)}</p>
+  <p>${cameraHolder.position.x.toFixed(2)},
+  ${cameraHolder.position.y.toFixed(2)},
+  ${cameraHolder.position.z.toFixed(2)}</p>
   <br />
-  <p>rotation x: ${this.camera.rotation.x.toFixed(2)}</p>
-  <p>rotation y: ${this.cameraHolder.rotation.y.toFixed(2)}</p>
-  <p>rotation z: ${this.camera.rotation.z.toFixed(2)}</p>
+  <p>rotation x: ${camera.rotation.x.toFixed(2)}</p>
+  <p>rotation y: ${cameraHolder.rotation.y.toFixed(2)}</p>
+  <p>rotation z: ${camera.rotation.z.toFixed(2)}</p>
   <br />
   <p>cosAngle: ${this.player.cosAngle.toFixed(2)}</p>
   <p>sinAngle: ${this.player.sinAngle.toFixed(2)}</p>
@@ -165,20 +136,16 @@ class Game {
     this.fps = 1000.0 / (now - this.previousFrame);
     this.previousFrame = now;
 
-    this.player.processPlayerMovements(this.scene, this.cameraHolder, this.fps);
-    this.setLightToCameraPosition(this.pointLight);
+    this.player.processPlayerMovements(
+      this.scene,
+      this.player.cameraHolder,
+      this.fps
+    );
+    this.player.setLightToCameraPosition(this.pointLight);
 
     if (this.debug) this.writeDebugData();
 
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  setLightToCameraPosition(light: THREE.PointLight) {
-    light.position.set(
-      this.cameraHolder.position.x,
-      this.cameraHolder.position.y,
-      this.cameraHolder.position.z
-    );
+    this.renderer.render(this.scene, this.player.camera);
   }
 
   addCube(
@@ -272,8 +239,8 @@ class Game {
           }
           case "p": {
             // Player
-            this.cameraHolder.position.x = x;
-            this.cameraHolder.position.z = z;
+            this.player.cameraHolder.position.x = x;
+            this.player.cameraHolder.position.z = z;
             break;
           }
         }
