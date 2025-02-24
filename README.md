@@ -7,6 +7,7 @@ A 3D game fitting in a small exe standalone file
 ## Resources
 
 [Textures](https://ambientcg.com)
+[Background](https://polyhaven.com/hdris)
 
 - Raw: 1024 \* 1024 (1256 KB)
 - Compression => 256 \* 256, JPG quality 35 (6 KB)

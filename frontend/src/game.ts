@@ -6,6 +6,7 @@ import {
 import { loadModel } from "./modelLoader";
 import { Player } from "./player";
 import { Lights } from "./lights";
+import { Textures } from "./textures";
 
 export class Game {
   // Config
@@ -28,23 +29,8 @@ export class Game {
   // Lights
   lights = new Lights(this.scene);
 
-  // Load texture
-  textureList = [
-    "EmergencyExit",
-    "Concrete",
-    "Gravel",
-    "Grass1",
-    "Grass2",
-    "Ground",
-    "Metal",
-    "PavingStones",
-    "Plaster",
-    "Rust",
-    "Steel",
-  ];
-  textures: Record<string, THREE.Texture> = {};
-  materials: Record<string, THREE.MeshLambertMaterial> = {};
-  textureLoader = new THREE.TextureLoader();
+  // Textures
+  textures = new Textures(this.scene);
 
   // Geometries
   cubeGeometry = new THREE.BoxGeometry();
@@ -66,18 +52,12 @@ export class Game {
     this.scene.add(this.player.cameraHolder);
     this.player.setLightToCameraPosition(this.lights.pointLight);
 
+    // 3D Models
+    loadModel(this.scene, this.models, "tree", -5, 0, 3);
+    loadModel(this.scene, this.models, "rock", -2, 0, 4);
+
     // Create renderer and bind it to the canvas
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    this.textureList.forEach((t) => {
-      this.textures[t] = this.textureLoader.load(`/${t}.jpg`);
-      this.materials[t] = new THREE.MeshLambertMaterial({
-        map: this.textures[t],
-      });
-    });
-
-    loadModel(this.scene, this.models, "second_tree", -5, 0, 3);
-    loadModel(this.scene, this.models, "first_rock", -2, 0, 4);
 
     // Handle window resize
     window.addEventListener("resize", () => {
@@ -86,6 +66,7 @@ export class Game {
       this.player.camera.updateProjectionMatrix();
     });
 
+    // Handle fullscreen
     window.addEventListener("keyup", (e) => {
       if (e.code === "F11") {
         this.isFullScreen ? WindowUnfullscreen() : WindowFullscreen();
@@ -167,7 +148,10 @@ export class Game {
     door.position.set(x, y + 0.4, z);
     this.scene.add(door);
 
-    const roofDoor = new THREE.Mesh(this.cubeGeometry, this.materials.Rust);
+    const roofDoor = new THREE.Mesh(
+      this.cubeGeometry,
+      this.textures.materials.Rust
+    );
     roofDoor.position.set(x, 2.4, z);
     roofDoor.scale.y = 0.2;
     this.scene.add(roofDoor);
@@ -176,7 +160,7 @@ export class Game {
   addEmergencyExit(x: number, y: number, z: number, rotated: boolean): void {
     const sign = new THREE.Mesh(
       this.cubeGeometry,
-      this.materials.EmergencyExit
+      this.textures.materials.EmergencyExit
     );
     sign.scale.x = 0.5;
     sign.scale.y = 0.25;
@@ -202,23 +186,23 @@ export class Game {
     map.split("\n").forEach((line, z) => {
       line.split("").forEach((char, x) => {
         // In any case, add floor and roof;
-        this.addCube(this.materials.Concrete, x, 0, z);
-        this.addCube(this.materials.Plaster, x, 3, z);
+        this.addCube(this.textures.materials.Concrete, x, 0, z);
+        this.addCube(this.textures.materials.Plaster, x, 3, z);
 
         switch (char) {
           case "w": {
-            this.addCube(this.materials.Rust, x, 1, z);
-            this.addCube(this.materials.Rust, x, 2, z);
+            this.addCube(this.textures.materials.Rust, x, 1, z);
+            this.addCube(this.textures.materials.Rust, x, 2, z);
             break;
           }
           case "d": {
             // Horizontal door
-            this.addDoor(this.materials.Steel, x, 1, z, false);
+            this.addDoor(this.textures.materials.Steel, x, 1, z, false);
             break;
           }
           case "D": {
             // Vertical door
-            this.addDoor(this.materials.Steel, x, 1, z, true);
+            this.addDoor(this.textures.materials.Steel, x, 1, z, true);
             break;
           }
           case "e": {

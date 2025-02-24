@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+export const CHUNK_SIZE = 16;
+
 export function createTerrainChunk(
   scene: THREE.Scene,
   material: THREE.MeshLambertMaterial,
@@ -7,7 +9,12 @@ export function createTerrainChunk(
   y: number,
   z: number
 ) {
-  const plane = new THREE.PlaneGeometry(16, 16, 16, 16);
+  const plane = new THREE.PlaneGeometry(
+    CHUNK_SIZE,
+    CHUNK_SIZE,
+    CHUNK_SIZE,
+    CHUNK_SIZE
+  );
   const mesh = new THREE.Mesh(plane, material);
 
   plane.rotateX(-Math.PI / 2);

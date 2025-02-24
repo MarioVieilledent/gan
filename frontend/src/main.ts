@@ -1,5 +1,5 @@
 import { Game } from "./game";
-import { createTerrainChunk } from "./terrain";
+import { CHUNK_SIZE, createTerrainChunk } from "./terrain";
 
 const game = new Game(false);
 
@@ -8,6 +8,16 @@ fetch("/map_test.txt").then((data) => {
     game.animate();
     game.parseAndBuildMap(textMap);
 
-    createTerrainChunk(game.scene, game.materials.Grass1, 0, 0, 0);
+    for (let x = -10; x <= 10; x++) {
+      for (let z = -10; z <= 10; z++) {
+        createTerrainChunk(
+          game.scene,
+          game.textures.materials.Grass1,
+          x * CHUNK_SIZE,
+          0,
+          z * CHUNK_SIZE
+        );
+      }
+    }
   });
 });
