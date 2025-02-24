@@ -5,8 +5,9 @@ import {
 } from "../wailsjs/runtime/runtime";
 import { loadModel } from "./modelLoader";
 import { Player } from "./player";
+import { Lights } from "./lights";
 
-class Game {
+export class Game {
   // Config
   debug = true;
   isFullScreen = false;
@@ -25,15 +26,15 @@ class Game {
   player = new Player();
 
   // Lights
-  ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-  directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
-  pointLight = new THREE.PointLight(0xffbb66, 0.0);
+  lights = new Lights(this.scene);
 
   // Load texture
   textureList = [
     "EmergencyExit",
     "Concrete",
     "Gravel",
+    "Grass1",
+    "Grass2",
     "Ground",
     "Metal",
     "PavingStones",
@@ -63,15 +64,10 @@ class Game {
     }
 
     this.scene.add(this.player.cameraHolder);
+    this.player.setLightToCameraPosition(this.lights.pointLight);
 
     // Create renderer and bind it to the canvas
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-    this.player.setLightToCameraPosition(this.pointLight);
-    this.scene.add(this.pointLight);
-    this.scene.add(this.ambientLight);
-    this.directionalLight.position.set(-3, 10, -10);
-    this.scene.add(this.directionalLight);
 
     this.textureList.forEach((t) => {
       this.textures[t] = this.textureLoader.load(`/${t}.jpg`);
@@ -130,8 +126,6 @@ class Game {
       model.rotation.y += 0.001;
     });
 
-    this.directionalLight.rotation.x += 0.01;
-
     const now = new Date().getTime();
     this.fps = 1000.0 / (now - this.previousFrame);
     this.previousFrame = now;
@@ -141,7 +135,7 @@ class Game {
       this.player.cameraHolder,
       this.fps
     );
-    this.player.setLightToCameraPosition(this.pointLight);
+    this.player.setLightToCameraPosition(this.lights.pointLight);
 
     if (this.debug) this.writeDebugData();
 
@@ -248,5 +242,3 @@ class Game {
     });
   }
 }
-
-export default Game;

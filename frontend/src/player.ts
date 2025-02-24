@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export class Player {
-  speed = 2.0; // block/s
+  speed = 3.0; // block/s // Good speed is 3
   cosAngle = 1.0;
   sinAngle = 0.0;
   isPressingW = false;
