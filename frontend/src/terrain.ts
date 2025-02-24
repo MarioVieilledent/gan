@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export const CHUNK_SIZE = 16;
+export const CHUNK_SIZE = 64;
 
 export function createTerrainChunk(
   scene: THREE.Scene,
@@ -15,7 +15,8 @@ export function createTerrainChunk(
     CHUNK_SIZE,
     CHUNK_SIZE
   );
-  const mesh = new THREE.Mesh(plane, material);
+  const planeMesh = new THREE.Mesh(plane, material);
+  planeMesh.name = `terrain`;
 
   plane.rotateX(-Math.PI / 2);
 
@@ -27,9 +28,9 @@ export function createTerrainChunk(
   pos.needsUpdate = true;
   plane.computeVertexNormals();
 
-  mesh.position.set(x, y, z);
+  planeMesh.position.set(x, y, z);
 
-  scene.add(mesh);
+  scene.add(planeMesh);
 }
 
 export function getElevation(x: number, z: number): number {

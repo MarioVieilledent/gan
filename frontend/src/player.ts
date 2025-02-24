@@ -31,6 +31,10 @@ export class Player {
   );
   cameraHolder = new THREE.Group();
 
+  // Render distances
+  terrainRenderDistance = 512;
+  modelRenderDistance = 256;
+
   constructor() {
     this.cameraHolder.add(this.camera);
     this.cameraHolder.position.y = 1.5;
@@ -79,7 +83,6 @@ export class Player {
     scene: THREE.Scene,
     cameraHolder: THREE.Group,
     fps: number,
-    renderDistance: number,
     backgroundImage: THREE.Mesh | null
   ) {
     if (this.isPressingW) {
@@ -112,11 +115,18 @@ export class Player {
 
       // Show only close objects
       scene.children.forEach((object) => {
-        if (object instanceof THREE.Mesh || object instanceof THREE.Group) {
+        if (object.name.startsWith("model")) {
           const distance = object.position.distanceTo(
             this.cameraHolder.position
           );
-          object.visible = distance < renderDistance;
+          object.visible = distance < this.modelRenderDistance;
+        }
+
+        if (object.name.startsWith("terrain")) {
+          const distance = object.position.distanceTo(
+            this.cameraHolder.position
+          );
+          object.visible = distance < this.terrainRenderDistance;
         }
       });
 

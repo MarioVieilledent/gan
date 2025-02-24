@@ -24,7 +24,6 @@ export class Game {
   renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById("canvas") as HTMLCanvasElement,
   });
-  renderDistance = 100;
   backgroundImage: THREE.Mesh | null = null;
 
   // Player
@@ -124,7 +123,6 @@ export class Game {
       this.scene,
       this.player.cameraHolder,
       this.fps,
-      this.renderDistance,
       this.backgroundImage
     );
     this.player.setLightToCameraPosition(this.lights.pointLight);

@@ -47,8 +47,9 @@ export class Models {
     z: number,
     rotation: number
   ): void {
-    const model = this.models[name].clone();
-    if (model) {
+    if (this.models[name]) {
+      const model = this.models[name].clone();
+      model.name = `model_${name}`;
       model.position.set(x, y, z);
       model.rotateY(rotation);
       scene.add(model);
