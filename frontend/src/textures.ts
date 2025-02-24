@@ -40,7 +40,7 @@ export class Textures {
 
   loadBackground(bgName: string): THREE.Mesh {
     // Create a large sphere to surround the camera
-    const geometry = new THREE.SphereGeometry(500, 32, 16);
+    const geometry = new THREE.SphereGeometry(512, 32, 16);
     const material = new THREE.MeshBasicMaterial({
       map: this.backgrounds[bgName],
       side: THREE.BackSide, // Ensures the texture is on the inside of the sphere
