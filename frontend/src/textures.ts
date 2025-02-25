@@ -1,17 +1,20 @@
 import * as THREE from "three";
 
 const textureList = [
-  "EmergencyExit",
-  "Concrete",
-  "Gravel",
-  "Grass1",
-  "Grass2",
-  "Ground",
-  "Metal",
-  "PavingStones",
-  "Plaster",
-  "Rust",
-  "Steel",
+  "emergencyExit",
+  "bricks",
+  "concrete",
+  "gravel",
+  "grass1",
+  "grass2",
+  "ground",
+  "metal",
+  "pavingStones",
+  "plaster",
+  "rust",
+  "steel",
+  "stone",
+  "woodPlanks",
 ];
 
 const backgroundList = ["clouds"];

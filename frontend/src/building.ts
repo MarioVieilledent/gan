@@ -6,41 +6,31 @@ export type BuildingObject = {
   type: string;
   position: Position;
   facing?: "north" | "south" | "west" | "east";
+  material: string;
 };
 
-export const exampleMap: BuildingObject[] = [
-  { type: "floor", position: { x: -5, y: 0, z: -5 } },
-  { type: "floor", position: { x: -5, y: 0, z: -4 } },
-  { type: "floor", position: { x: -4, y: 0, z: -5 } },
-  { type: "floor", position: { x: -4, y: 0, z: -4 } },
-  { type: "wall", position: { x: -5, y: 0, z: -5 }, facing: "south" },
-  { type: "wall", position: { x: -4, y: 0, z: -5 }, facing: "south" },
-  { type: "wall", position: { x: -5, y: 0, z: -5 }, facing: "east" },
-  { type: "wall", position: { x: -5, y: 0, z: -4 }, facing: "east" },
-  { type: "wall", position: { x: -4, y: 0, z: -5 }, facing: "west" },
-  { type: "wall", position: { x: -4, y: 0, z: -4 }, facing: "west" },
-  { type: "wall", position: { x: -5, y: 0, z: -4 }, facing: "north" },
-  { type: "wall", position: { x: -4, y: 0, z: -4 }, facing: "north" },
-];
-
 const defaultCube = new THREE.BoxGeometry();
-const defaultMaterial = new THREE.MeshLambertMaterial({ color: 0x8db9be });
 
-export function loadObjects(scene: THREE.Scene, objectGroup: BuildingObject[]) {
+export function loadObjects(
+  scene: THREE.Scene,
+  materials: Record<string, THREE.MeshLambertMaterial>,
+  objectGroup: BuildingObject[]
+) {
   objectGroup.forEach((object) => {
     switch (object.type) {
       case "floor": {
-        const floor = new THREE.Mesh(defaultCube, defaultMaterial);
+        const floor = new THREE.Mesh(defaultCube, materials[object.material]);
         positionObject(floor, object.position);
 
         floor.scale.setY(0.2);
-        floor.position.y -= 0.5;
+        floor.position.y -= 0.6;
 
         scene.add(floor);
         break;
       }
+
       case "wall": {
-        const wall = new THREE.Mesh(defaultCube, defaultMaterial);
+        const wall = new THREE.Mesh(defaultCube, materials[object.material]);
         positionObject(wall, object.position);
 
         switch (object.facing) {

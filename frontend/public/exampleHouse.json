@@ -1,0 +1,70 @@
+[
+  {
+    "type": "floor",
+    "position": { "x": -5, "y": 0, "z": -5 },
+    "material": "bricks"
+  },
+  {
+    "type": "floor",
+    "position": { "x": -5, "y": 0, "z": -4 },
+    "material": "bricks"
+  },
+  {
+    "type": "floor",
+    "position": { "x": -4, "y": 0, "z": -5 },
+    "material": "bricks"
+  },
+  {
+    "type": "floor",
+    "position": { "x": -4, "y": 0, "z": -4 },
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -5, "y": 0, "z": -5 },
+    "facing": "south",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -4, "y": 0, "z": -5 },
+    "facing": "south",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -5, "y": 0, "z": -5 },
+    "facing": "east",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -5, "y": 0, "z": -4 },
+    "facing": "east",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -4, "y": 0, "z": -5 },
+    "facing": "west",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -4, "y": 0, "z": -4 },
+    "facing": "west",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -5, "y": 0, "z": -4 },
+    "facing": "north",
+    "material": "bricks"
+  },
+  {
+    "type": "wall",
+    "position": { "x": -4, "y": 0, "z": -4 },
+    "facing": "north",
+    "material": "bricks"
+  }
+]
