@@ -1,3 +1,4 @@
+import { exampleMap, loadObjects } from "./building";
 import { Game } from "./game";
 import { CHUNK_SIZE, createTerrainChunk } from "./terrain";
 
@@ -7,6 +8,7 @@ fetch("/map_test.txt").then((data) => {
   data.text().then((textMap) => {
     game.animate();
     game.parseAndBuildMap(textMap);
+    loadObjects(game.scene, exampleMap);
 
     for (let x = -10; x <= 10; x++) {
       for (let z = -10; z <= 10; z++) {
