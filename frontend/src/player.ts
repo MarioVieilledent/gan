@@ -11,6 +11,8 @@ export class Player {
   isPressingA = false;
   isPressingS = false;
   isPressingD = false;
+  isPressingLeftMouse = false;
+  isPressingRightMouse = false;
 
   eatBoxSize = 0.2; // block
 
@@ -40,6 +42,25 @@ export class Player {
     this.cameraHolder.position.y = 1.5;
 
     this.precomputeCosAndSin(this.cameraHolder);
+
+    window.addEventListener("wheel", (e) => {
+      if (e.deltaY > 0) {
+        // FIXME Zoom out from player pos
+      } else if (e.deltaY < 0) {
+        // FIXME Zoom in from player pos
+      }
+    });
+
+    window.addEventListener("mousedown", (e) => {
+      console.log(e.button);
+      if (e.button === 0) this.isPressingLeftMouse = true;
+      if (e.button === 0) this.isPressingRightMouse = true;
+    });
+
+    window.addEventListener("mouseup", (e) => {
+      if (e.button === 0) this.isPressingLeftMouse = false;
+      if (e.button === 0) this.isPressingRightMouse = false;
+    });
 
     window.addEventListener("keydown", (e) => {
       if (e.code === "KeyW") this.isPressingW = true;

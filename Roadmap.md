@@ -17,6 +17,8 @@
 - [x] Create blender 3d model with colors and use it
 - [] Buggy collisions, make 3d realistic collisions and eatbox
 - [] Middle cursor to interact with object, open and close doors
+- [] Collect ressources, with cursor, resource counter in debug for first
+- [] Place blocks, with material
 - [] Create 3D lowpoly character, animate it with standing, running, sitting at least
 - [] import low poly character, use it as player, make camera as 3rd person and separate player pos to camera pos
 - [] Play sounds, music maybe
