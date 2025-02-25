@@ -17,9 +17,9 @@
 - [x] Create blender 3d model with colors and use it
 - [] Buggy collisions, make 3d realistic collisions and eatbox
 - [] Middle cursor to interact with object, open and close doors
+- [] Create 3D lowpoly character, animate it with standing, running, sitting at least
+- [] import low poly character, use it as player, make camera as 3rd person and separate player pos to camera pos
 - [] Play sounds, music maybe
-- [] Game Design: need a plot, a story, a location, a time, a context, people?
-- [] Map design, design more objects, place them in map
 
 ### Mars 2025
 
@@ -33,8 +33,12 @@ Avec des énigmes à résoudre, plusieur manière de résoudre un problème, plu
 
 > Jeu comfy avec une cabane cozy où tu peux explorer, juste la cabane cozy. Eventuellement avec une foret pour se balader. Certains jeux d'horreurs peuvent etre cozy si on enlève l'horreur.
 
-### Multi sans plot, ou c'est le joueur qui créé son plot
+### Multi sans lore, ou c'est le joueur qui le créé
 
 Idée: à chaque porte/coffre placé, un input pop et demande au joueur d'écrire un panneau, avec un placeholder du style "What are you building?", "What is this house for?", "What is your goal here?".
 
 Ca permettrait aux autres joueurs d'accéder à du lore fait par un anon, sans avoir à dev quoi que ce soit coté lore.
+
+Faudrait un systeme de création de perso ultra simple & low poly, avec un choix entre races, une fois un perso créé, tu peux l'incarner sur le serv unique (pas de jeu solo/campagne) et tu le joue jusqu'à sa mort, à sa mort ton compte obtien des stats (nb persos incarnés, nm de kill, km parcourus, blocs posés, xp, etc.)
+
+Ultra rapide, ouvre lien => social connect avec Discord => incarne un perso
