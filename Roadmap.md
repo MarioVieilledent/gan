@@ -15,7 +15,7 @@
 - [x] Specify map in JSON or TXT, read, parse, build map
 - [x] Collisions, use MBR of objects?
 - [x] Create blender 3d model with colors and use it
-- [] Buggy collisions, make 3d realistic collisions and eatbox
+- [] Make 3d realistic collisions and eatbox
 - [] Middle cursor to interact with object, open and close doors
 - [] Collect ressources, with cursor, resource counter in debug for first
 - [] Place blocks, with material

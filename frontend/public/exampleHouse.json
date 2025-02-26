@@ -2,69 +2,69 @@
   {
     "type": "floor",
     "position": { "x": -5, "y": 0, "z": -5 },
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "floor",
     "position": { "x": -5, "y": 0, "z": -4 },
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "floor",
     "position": { "x": -4, "y": 0, "z": -5 },
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "floor",
     "position": { "x": -4, "y": 0, "z": -4 },
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -5, "y": 0, "z": -5 },
     "facing": "south",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -4, "y": 0, "z": -5 },
     "facing": "south",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -5, "y": 0, "z": -5 },
     "facing": "east",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -5, "y": 0, "z": -4 },
     "facing": "east",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -4, "y": 0, "z": -5 },
     "facing": "west",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -4, "y": 0, "z": -4 },
     "facing": "west",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -5, "y": 0, "z": -4 },
     "facing": "north",
-    "material": "bricks"
+    "material": "woodPlanks"
   },
   {
     "type": "wall",
     "position": { "x": -4, "y": 0, "z": -4 },
     "facing": "north",
-    "material": "bricks"
+    "material": "woodPlanks"
   }
 ]

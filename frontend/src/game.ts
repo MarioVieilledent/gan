@@ -38,10 +38,6 @@ export class Game {
   // 3D Models
   models = new Models(this.scene);
 
-  // Geometries
-  cubeGeometry = new THREE.BoxGeometry();
-  cylinderGeometry = new THREE.CylinderGeometry(0.2, 0.2, 1, 16);
-
   // FPS
   fps: number = 60.0;
   previousFrame = new Date().getTime();

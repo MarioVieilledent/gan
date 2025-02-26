@@ -5,15 +5,9 @@ import { getElevation } from "./terrain";
 export class Player {
   speed = 3.0; // block/s // Good speed is 3
 
-  // cosAngle = 1.0;
-  // sinAngle = 0.0;
-
-  isPressingW = false;
-  isPressingA = false;
-  isPressingS = false;
-  isPressingD = false;
   isPressingLeftMouse = false;
   isPressingRightMouse = false;
+  keyStates: Record<string, boolean> = {};
 
   eatBoxSize = 0.2; // block
 
@@ -41,7 +35,8 @@ export class Player {
   modelRenderDistance = 256;
 
   constructor() {
-    // add event listener to show/hide a UI (e.g. the game's menu)
+    // Initial camera height
+    this.camera.position.setY(this.cameraHeight);
 
     this.controls.addEventListener("lock", () => {
       // In FPS mode, hide menu | FIXME
@@ -60,29 +55,24 @@ export class Player {
     });
 
     window.addEventListener("mousedown", (e) => {
-      console.log(e.button);
       if (e.button === 0) this.isPressingLeftMouse = true;
-      if (e.button === 0) this.isPressingRightMouse = true;
+      if (e.button === 2) this.isPressingRightMouse = true;
     });
 
     window.addEventListener("mouseup", (e) => {
       if (e.button === 0) this.isPressingLeftMouse = false;
-      if (e.button === 0) this.isPressingRightMouse = false;
+      if (e.button === 2) this.isPressingRightMouse = false;
     });
 
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "KeyW") this.isPressingW = true;
-      if (e.code === "KeyA") this.isPressingA = true;
-      if (e.code === "KeyS") this.isPressingS = true;
-      if (e.code === "KeyD") this.isPressingD = true;
-    });
+    window.addEventListener(
+      "keydown",
+      (event) => (this.keyStates[event.code] = true)
+    );
 
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "KeyW") this.isPressingW = false;
-      if (e.code === "KeyA") this.isPressingA = false;
-      if (e.code === "KeyS") this.isPressingS = false;
-      if (e.code === "KeyD") this.isPressingD = false;
-    });
+    window.addEventListener(
+      "keyup",
+      (event) => (this.keyStates[event.code] = false)
+    );
   }
 
   setLightToCameraPosition(light: THREE.PointLight) {
@@ -99,25 +89,19 @@ export class Player {
     fps: number,
     backgroundImage: THREE.Mesh | null
   ) {
-    if (this.isPressingW) {
-      this.controls.moveForward(this.speed / fps);
-    }
-
-    if (this.isPressingA) {
-      this.controls.moveRight(-this.speed / fps);
-    }
-
-    if (this.isPressingS) {
-      this.controls.moveForward(-this.speed / fps);
-    }
-
-    if (this.isPressingD) {
-      this.controls.moveRight(this.speed / fps);
-    }
+    if (this.keyStates.KeyW) this.controls.moveForward(this.speed / fps);
+    if (this.keyStates.KeyA) this.controls.moveRight(-this.speed / fps);
+    if (this.keyStates.KeyS) this.controls.moveForward(-this.speed / fps);
+    if (this.keyStates.KeyD) this.controls.moveRight(this.speed / fps);
 
     // If player has moved
-    if (true) {
-      // Set player's height
+    if (
+      this.keyStates.KeyW ||
+      this.keyStates.KeyA ||
+      this.keyStates.KeyS ||
+      this.keyStates.KeyD
+    ) {
+      // Force player's height
       this.camera.position.setY(
         getElevation(camera.position.x, camera.position.z) + this.cameraHeight
       );
