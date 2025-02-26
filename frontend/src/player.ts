@@ -1,11 +1,12 @@
 import * as THREE from "three";
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
 import { getElevation } from "./terrain";
 
 export class Player {
   speed = 3.0; // block/s // Good speed is 3
 
-  cosAngle = 1.0;
-  sinAngle = 0.0;
+  // cosAngle = 1.0;
+  // sinAngle = 0.0;
 
   isPressingW = false;
   isPressingA = false;
@@ -31,17 +32,24 @@ export class Player {
     0.1,
     1000
   );
-  cameraHolder = new THREE.Group();
+  controls = new PointerLockControls(this.camera, document.body);
+
+  // camera = new THREE.Group();
 
   // Render distances
   terrainRenderDistance = 512;
   modelRenderDistance = 256;
 
   constructor() {
-    this.cameraHolder.add(this.camera);
-    this.cameraHolder.position.y = 1.5;
+    // add event listener to show/hide a UI (e.g. the game's menu)
 
-    this.precomputeCosAndSin(this.cameraHolder);
+    this.controls.addEventListener("lock", () => {
+      // In FPS mode, hide menu | FIXME
+    });
+
+    this.controls.addEventListener("unlock", () => {
+      // Out of FPS mode, show menu | FIXME
+    });
 
     window.addEventListener("wheel", (e) => {
       if (e.deltaY > 0) {
@@ -75,93 +83,64 @@ export class Player {
       if (e.code === "KeyS") this.isPressingS = false;
       if (e.code === "KeyD") this.isPressingD = false;
     });
-
-    // Listen to mouse movement
-    window.addEventListener("mousemove", (event) => {
-      event.preventDefault();
-      if (document.pointerLockElement === document.body) {
-        this.yaw -= event.movementX * this.sensitivity;
-        this.pitch -= event.movementY * this.sensitivity;
-        this.pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.pitch)); // Clamp pitch to avoid flipping
-
-        this.cameraHolder.rotation.y = this.yaw; // Yaw applied to parent group
-        this.camera.rotation.x = this.pitch; // Pitch applied only to camera
-
-        this.precomputeCosAndSin(this.cameraHolder);
-      }
-    });
   }
 
   setLightToCameraPosition(light: THREE.PointLight) {
     light.position.set(
-      this.cameraHolder.position.x,
-      this.cameraHolder.position.y,
-      this.cameraHolder.position.z
+      this.camera.position.x,
+      this.camera.position.y,
+      this.camera.position.z
     );
   }
 
   processPlayerMovements(
     scene: THREE.Scene,
-    cameraHolder: THREE.Group,
+    camera: THREE.Camera,
     fps: number,
     backgroundImage: THREE.Mesh | null
   ) {
     if (this.isPressingW) {
-      cameraHolder.position.z -= (this.speed / fps) * this.cosAngle;
-      cameraHolder.position.x -= (this.speed / fps) * this.sinAngle;
+      this.controls.moveForward(this.speed / fps);
     }
 
     if (this.isPressingA) {
-      cameraHolder.position.z += (this.speed / fps) * this.sinAngle;
-      cameraHolder.position.x -= (this.speed / fps) * this.cosAngle;
+      this.controls.moveRight(-this.speed / fps);
     }
 
     if (this.isPressingS) {
-      cameraHolder.position.z += (this.speed / fps) * this.cosAngle;
-      cameraHolder.position.x += (this.speed / fps) * this.sinAngle;
+      this.controls.moveForward(-this.speed / fps);
     }
 
     if (this.isPressingD) {
-      cameraHolder.position.z -= (this.speed / fps) * this.sinAngle;
-      cameraHolder.position.x += (this.speed / fps) * this.cosAngle;
+      this.controls.moveRight(this.speed / fps);
     }
 
     // If player has moved
     if (true) {
       // Set player's height
-      this.cameraHolder.position.setY(
-        getElevation(cameraHolder.position.x, cameraHolder.position.z) +
-          this.cameraHeight
+      this.camera.position.setY(
+        getElevation(camera.position.x, camera.position.z) + this.cameraHeight
       );
 
       // Show only close objects
       scene.children.forEach((object) => {
         if (object.name.startsWith("model")) {
-          const distance = object.position.distanceTo(
-            this.cameraHolder.position
-          );
+          const distance = object.position.distanceTo(this.camera.position);
           object.visible = distance < this.modelRenderDistance;
         }
 
         if (object.name.startsWith("terrain")) {
-          const distance = object.position.distanceTo(
-            this.cameraHolder.position
-          );
+          const distance = object.position.distanceTo(this.camera.position);
           object.visible = distance < this.terrainRenderDistance;
         }
       });
 
       // Set background texture sphere in the center
       backgroundImage?.position.set(
-        cameraHolder.position.x,
-        cameraHolder.position.y,
-        cameraHolder.position.z
+        camera.position.x,
+        camera.position.y,
+        camera.position.z
       );
     }
-  }
-
-  precomputeCosAndSin(cameraHolder: THREE.Group) {
-    this.cosAngle = Math.cos(cameraHolder.rotation.y);
-    this.sinAngle = Math.sin(cameraHolder.rotation.y);
   }
 }

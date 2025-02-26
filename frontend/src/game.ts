@@ -53,7 +53,7 @@ export class Game {
     }
 
     // Set camera
-    this.scene.add(this.player.cameraHolder);
+    this.scene.add(this.player.camera);
 
     // Set lights position
     this.player.setLightToCameraPosition(this.lights.pointLight);
@@ -89,24 +89,20 @@ export class Game {
 
   writeDebugData() {
     const camera = this.player.camera;
-    const cameraHolder = this.player.cameraHolder;
 
     this.debugText.innerHTML = `
   <p>FPS: ${this.fps.toFixed(1)}</p>
-  <p>${cameraHolder.position.x.toFixed(2)},
-  ${cameraHolder.position.y.toFixed(2)},
-  ${cameraHolder.position.z.toFixed(2)}</p>
+  <p>${camera.position.x.toFixed(2)},
+  ${camera.position.y.toFixed(2)},
+  ${camera.position.z.toFixed(2)}</p>
   <br />
   <p>rotation x: ${camera.rotation.x.toFixed(2)}</p>
-  <p>rotation y: ${cameraHolder.rotation.y.toFixed(2)}</p>
+  <p>rotation y: ${camera.rotation.y.toFixed(2)}</p>
   <p>rotation z: ${camera.rotation.z.toFixed(2)}</p>
   <br />
-  <p>cosAngle: ${this.player.cosAngle.toFixed(2)}</p>
-  <p>sinAngle: ${this.player.sinAngle.toFixed(2)}</p>
-  <br />
   <p>elevation: ${getElevation(
-    Math.round(cameraHolder.position.x),
-    Math.round(cameraHolder.position.z)
+    Math.round(camera.position.x),
+    Math.round(camera.position.z)
   ).toFixed(2)}</p>
   `;
   }
@@ -121,7 +117,7 @@ export class Game {
 
     this.player.processPlayerMovements(
       this.scene,
-      this.player.cameraHolder,
+      this.player.camera,
       this.fps,
       this.backgroundImage
     );

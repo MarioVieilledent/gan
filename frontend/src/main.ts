@@ -1,6 +1,7 @@
 import { loadObjects } from "./building";
 import { Game } from "./game";
 import { CHUNK_SIZE, createTerrainChunk } from "./terrain";
+import "./style.css";
 
 const game = new Game(true);
 
