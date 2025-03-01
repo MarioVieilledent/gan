@@ -34,10 +34,10 @@ canvas {
 }
 #cursor {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: calc(50% - 8px);
+  left: calc(50% - 8px);
   width: 16px;
   height: 16px;
   border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.3);
 }

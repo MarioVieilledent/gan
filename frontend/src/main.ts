@@ -14,7 +14,7 @@ fetch("/exampleHouse.json").then((data) => {
       for (let z = -10; z <= 10; z++) {
         createTerrainChunk(
           game.scene,
-          game.textures.materials.grass2,
+          game.textures.materials.grass,
           x * CHUNK_SIZE,
           0,
           z * CHUNK_SIZE
